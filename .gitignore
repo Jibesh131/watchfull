@@ -1,0 +1,10 @@
+# Ignore all feature files
+*.feature
+
+# Ignore temporary files
+*.log
+*.tmp
+
+# Ignore directories
+node_modules/
+vendor

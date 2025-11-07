@@ -12,11 +12,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
         then: function(){
             Route::middleware('web')->group(base_path('routes/auth.php'));
-            Route::middleware('web')->prefix('backend')->group(base_path('routes/admin.php'));
+            Route::middleware(['web', 'admin'])->prefix('backend')->group(base_path('routes/admin.php'));
+            Route::middleware(['web', 'creator'])->prefix('creator')->group(base_path('routes/creator.php'));
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'creator'  => \App\Http\Middleware\CreatorMiddleware::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

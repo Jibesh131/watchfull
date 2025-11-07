@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class AdminMiddleware
+class CreatorMiddleware
 {
     /**
      * Handle an incoming request.
@@ -16,10 +16,10 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Auth::check() || Auth::user()->role !== 'admin') {
-            return redirect()->guest(route('auth.admin.login.view'));
+        if (!Auth::check() || Auth::user()->role !== 'creator') {
+            return redirect()->guest(route('auth.creator.login.view'));
         }
-        
+
         return $next($request);
     }
 }

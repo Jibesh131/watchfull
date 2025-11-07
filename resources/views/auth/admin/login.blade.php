@@ -77,7 +77,7 @@
     <script>
         particlesJS("particles-js", {
             "particles": {
-                "number": { "value": 200 },
+                "number": { "value": 80 },
                 "size": { "value": 3 },
                 "color": { "value": "#00eaff" },
                 "move": { "speed": 1 },
@@ -85,6 +85,14 @@
                     "enable": true,
                     "distance": 150,
                     "color": "#00eaff"
+                }
+            },
+            "interactivity": {
+                "events": {
+                    "onclick": {
+                        "enable": false,
+                        "mode": "push"
+                    }
                 }
             }
         });

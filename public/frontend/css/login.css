@@ -16,12 +16,124 @@ body {
     position: relative;
     z-index: 1;
     background: #1a1a24;
-    padding: 30px 35px;
+    padding: 30px;
     border-radius: 20px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-    width: 420px;
+    width: 820px;
     max-width: 90%;
     margin: 50px;
+    display: flex;
+    gap: 30px;
+}
+
+.login-container .poster-section{
+    width: 365px;
+    flex: 1;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #c075c9 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 35px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.poster-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 30px 30px;
+    animation: moveGrid 20s linear infinite;
+}
+
+@keyframes moveGrid {
+    0% {
+        transform: translate(0, 0);
+    }
+
+    100% {
+        transform: translate(30px, 30px);
+    }
+}
+
+.poster-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+}
+
+.poster-icon {
+    width: 120px;
+    height: 120px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.poster-icon svg {
+    width: 60px;
+    height: 60px;
+    color: white;
+}
+
+.poster-content h2 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 15px;
+    line-height: 1.2;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+}
+
+.poster-content p {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.95);
+    line-height: 1.5;
+    margin-bottom: 30px;
+    max-width: 450px;
+}
+
+.features {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: left;
+    max-width: 365px;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    padding: 12px 20px;
+    border-radius: 12px;
+    color: white;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.feature-item svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.login-container .form-content{
+    width: 365px;
+    /* border: 1px solid aqua; */
 }
 
 .login-container .logo {
@@ -41,7 +153,7 @@ body {
     height: 28px;
 }
 
-.login-container h2 {
+h2 {
     text-align: center;
     font-size: 30px;
     font-weight: 700;
@@ -58,7 +170,7 @@ body {
     display: block;
     font-size: 14px;
     font-weight: 500;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
     color: #e5e7eb;
 }
 

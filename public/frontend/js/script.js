@@ -1,4 +1,17 @@
 $(document).ready(function () {
+    $('#userProfile').on('click', function (e) {
+        e.stopPropagation()
+        $('.dropdown-menu').not($(this).find('.dropdown-menu')).slideUp(150)
+        $(this).find('.dropdown-menu').stop(true, true).slideToggle(150)
+    })
+
+    $(document).on('click', function () {
+        $('.dropdown-menu').slideUp(150)
+    })
+})
+
+// For Sidebar
+$(document).ready(function () {
     const $siteLogo = $('#site-logo');
     const $sidebar = $('#sidebar');
     const $toggleBtnBox = $('.toggleBtnBox');
@@ -23,6 +36,7 @@ $(document).ready(function () {
         $toggleBtnBox.css('justify-content', 'center');
         $sidebarTitle.hide();
         $navContainer.css('margin-left', '4rem').css('width', 'calc(100% - 4rem)');
+        $(window).trigger('resize');
     }
 
     function unfoldSidebar() {
@@ -35,6 +49,7 @@ $(document).ready(function () {
         $toggleBtnBox.css('justify-content', 'space-between');
         $sidebarTitle.show();
         $navContainer.css('margin-left', '15rem').css('width', 'calc(100% - 15rem)');
+        $(window).trigger('resize');
     }
 
     // Hover behavior for desktop
@@ -83,6 +98,7 @@ $(document).ready(function () {
         }
     });
 });
+
 
 // For Navbar
 $(document).ready(function () {
@@ -156,56 +172,24 @@ $(function () {
 });
 
 
-
 // Poster Slider
-$(document).ready(function() {
-
-    // ===== CONFIGURATION =====
-    var visibleItems = 6.5;    // number of items visible (6 full + 1 half)
-    var slideBy = 6;           // number of items to move per click
-    var gap = 12;              // space between cards (in px, must match CSS gap)
-    var animationSpeed = 650;  // ms for transition
-
-    // ===== SLIDER LOGIC =====
-    $(".poster-slider").each(function() {
-    const $slider = $(this);
-    const $track = $slider.find(".poster-slider-track");
-    const $cards = $slider.find(".poster-card");
-    const $prev = $slider.find(".nav.prev");
-    const $next = $slider.find(".nav.next");
-
-    let cardWidth = $cards.outerWidth(true);
-    let totalCards = $cards.length;
-    let currentIndex = 0;
-
-    // Apply CSS transition (lightweight)
-    $track.css("transition", `transform ${animationSpeed}ms ease`);
-
-    function updateButtons() {
-        $prev.prop("disabled", currentIndex === 0);
-      $next.prop("disabled", currentIndex >= totalCards - visibleItems);
-    }
-
-    function moveSlider() {
-        let moveX = currentIndex * (cardWidth + gap);
-    $track.css("transform", `translateX(-${moveX}px)`);
-    updateButtons();
-    }
-
-    $next.on("click", function() {
-        currentIndex = Math.min(currentIndex + slideBy, totalCards - visibleItems);
-    moveSlider();
+document.addEventListener('DOMContentLoaded', () => {
+    new Swiper('.poster-swiper', {
+        slidesPerView: 5.5,       // How many slides are visible at once
+        slidesPerGroup: 5,         // How many slides to scroll at a time
+        spaceBetween: 14,          // Gap between slides
+        speed: 800,
+        navigation: {
+            nextEl: '.poster-nav.next',
+            prevEl: '.poster-nav.prev',
+        },
+        grabCursor: true,
+        observer: true,
+        observeParents: true,
+        loop: false,               // Keep false if you don’t want infinite looping
     });
-
-    $prev.on("click", function() {
-        currentIndex = Math.max(currentIndex - slideBy, 0);
-    moveSlider();
-    });
-
-    updateButtons(); // initialize
-  });
-
 });
+
 
 
 $(document).ready(function () {

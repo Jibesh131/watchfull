@@ -3,44 +3,115 @@
 
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Watchfull</title>
-    <link rel="icon" type="image/png" href="images/logo-removebg-preview.png">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="css/style.css">
+    <meta charset="utf-8" />
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="shortcut icon" href="{{ asset('mix/image/logo.png') }}" type="image/x-icon">
+    <title>
+        {{ config('app.name') ?? '' }}
+        {{ empty($title) ? '' : ' | ' . $title }}
+    </title>
+    <script src="{{ asset('admin/js/plugin/webfont/webfont.min.js') }}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link rel="stylesheet" href="{{ asset('admin/css/style.css') }}?v={{ time() }}" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <script>
+        WebFont.load({
+            google: {
+                families: ["Public Sans:300,400,500,600,700"]
+            },
+            custom: {
+                families: [
+                    "Font Awesome 5 Solid",
+                    "Font Awesome 5 Regular",
+                    "Font Awesome 5 Brands",
+                    "simple-line-icons",
+                ],
+                urls: ["{{ asset('admin/css/fonts.min.css') }}"],
+            },
+            active: function() {
+                sessionStorage.fonts = true;
+            },
+        });
+    </script>
+
+    <link rel="stylesheet" href="{{ asset('admin/css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('admin/css/plugins.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('admin/css/kaiadmin.min.css') }}" />
+
+
+    <script src="{{ asset('admin/js/core/jquery-3.7.1.min.js') }}"></script>
+    <script src="{{ asset('admin/js/core/popper.min.js') }}"></script>
+    <script src="{{ asset('admin/js/core/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('admin/js/plugin/chart.js/chart.min.js') }}"></script>
+    <script src="{{ asset('common/js/main.js') }}"></script>
+    <script src=" https://cdn.jsdelivr.net/npm/sweetalert2@11.22.0/dist/sweetalert2.all.min.js "></script>
+    <link href=" https://cdn.jsdelivr.net/npm/sweetalert2@11.22.0/dist/sweetalert2.min.css " rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
     @stack('cdn')
     @stack('css')
 </head>
 
 <body>
-    <!-- Navbar -->
-    @include('creator.layout.inc.navbar')
-    <!-- Sidebar -->
-    @include('creator.layout.inc.sidebar')
+    @include('creator.layout.inc.alert')
+    <div class="wrapper">
+        @include('creator.layout.inc.sidebar')
+        <div class="main-panel">
+            @include('creator.layout.inc.navbar')
+            <div class="container">
+                <div class="page-inner">
+                    @include('creator.layout.inc.breadcrumbs')    
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card p-3">
+                                @yield('content')
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @stack('modal')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            $('#logoutBtn').on('click', function() {
+                Swal.fire({
+                    title: 'Are you sure you want to logout?',
+                    text: "You will be logged out of the admin panel.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, logout',
+                    cancelButtonText: 'Cancel',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "{{ '' }}";
+                    }
+                });
+            })
 
-    <!-- Main Content -->
-    <main id="mainContent">
-        @yield('content')
-    </main>
+            $('button[data-dismiss="modal"]').on('click', function() {
+                const modalId = $(this).data('modal');
+                const $modal = $('#' + modalId);
 
-    <!-- Footer -->
-    @include('creator.layout.inc.footer')
+                if ($modal.length) {
+                    $modal.modal('hide');
+                    $modal.hide();
+                    $('.modal-backdrop').remove();
+                    $('body').removeClass('modal-open');
+                }
+            });
 
-   @stack('modal')
-
-    <!-- Mobile Menu -->
-    <button id="mobileMenu">☰</button>
-
+            $(".datepicker").datepicker();
+            $(".select2").select2();
+        })
+    </script>
+    
     @stack('js')
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js" defer></script>
-    <script src="js/script.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-        crossorigin="anonymous"></script>
 </body>
 
 </html>

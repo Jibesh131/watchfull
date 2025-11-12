@@ -2,7 +2,7 @@
     <div class="sidebar-logo">
         <div class="logo-header" data-background-color="dark">
             <a href="{{ route('index') }}" class="logo" target="_blank">
-                <img src="{{ asset('assets/frontend/images/santa-monica-white-logo-new.png') }}" alt="navbar"
+                <img src="{{ asset('assets/frontend/images/logo.png') }}" alt="navbar"
                     class="navbar-brand" height="20">
             </a>
             <div class="nav-toggle">
@@ -29,7 +29,7 @@
                 </li>
                 <li class="nav-item">
                     <a href="{{ route('creator.content') }}">
-                        <i class="fas fa-home"></i>
+                        <i class="fa-solid fa-arrows-to-circle"></i>
                         <p>My Content</p>
                     </a>
                 </li>

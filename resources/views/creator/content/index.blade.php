@@ -65,6 +65,7 @@
                     <td>
                         <button class="btn btn-sm btn-outline-primary"><i class="fa fa-edit"></i></button>
                         <button class="btn btn-sm btn-outline-danger"><i class="fa fa-trash"></i></button>
+                        <button class="btn btn-sm btn-outline-secondary"><i class="fa fa-gear"></i></button>
                     </td>
                 </tr>
             </tbody>

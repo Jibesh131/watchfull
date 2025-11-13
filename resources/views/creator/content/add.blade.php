@@ -34,13 +34,8 @@
 @endpush
 
 @section('content')
-{{-- <div class="card-header"> </div> --}}
 
 <div class="card-body">
-    <div class="col-md-12">
-        <label for="ids">Test</label>
-        <input type="text" name="asd" id="ids" class="form-control">
-    </div>
     <livewire:creator.content-form />
 </div>
 
@@ -48,6 +43,11 @@
 
 @push('js')
 <script>
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+
     function previewThumbnail(event) {
         const file = event.target.files[0];
         const previewBtn = document.getElementById('previewBtn');
@@ -69,20 +69,42 @@
     }
 </script>
 <script>
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl)
-    })
+(() => {
+    const initTagify = () => {
+        const inputs = document.querySelectorAll('input[data-tagify], textarea[data-tagify]');
+        if (!inputs.length || !window.Tagify) return;
 
-    $(document).ready(function () {
-        let thumbnail = $('#thumbnail');
-        thumbnail.on('change', function () {
-            const file = this.files[0];
-            if (file) {
-                $('#show-thumbnail').attr('src', URL.createObjectURL(file));
+        inputs.forEach(el => {
+            if (el.__tagify_attached) return;
+
+            try {
+                new Tagify(el, {
+                    dropdown: {
+                        enabled: 0,
+                        position: 'input'
+                    }
+                });
+                el.__tagify_attached = true;
+                console.log(`✨ Tagify initialized on: #${el.id || '(unnamed element)'}`);
+            } catch (e) {
+                console.error('Tagify init failed:', e, el);
             }
         });
+    };
+
+    document.addEventListener('DOMContentLoaded', initTagify);
+
+    document.addEventListener('livewire:init', () => {
+        initTagify();
+        Livewire.hook('morph.after', () => setTimeout(initTagify, 50));
     });
+
+    new MutationObserver(() => setTimeout(initTagify, 100))
+        .observe(document.body, { childList: true, subtree: true });
+})();
 </script>
+
+
+
 
 @endpush

@@ -47,15 +47,15 @@
     <script src="{{ asset('common/js/main.js') }}"></script>
     <script src=" https://cdn.jsdelivr.net/npm/sweetalert2@11.22.0/dist/sweetalert2.all.min.js "></script>
     <link href=" https://cdn.jsdelivr.net/npm/sweetalert2@11.22.0/dist/sweetalert2.min.css " rel="stylesheet">
+    
+    @livewireStyles
 
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css"/>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
     @stack('cdn')
-    @livewireStyles
     @stack('css')
     
 </head>
@@ -115,8 +115,9 @@
         })
     </script>
     
-    @stack('js')
+    <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
     @livewireScripts
+    @stack('js')
 </body>
 
 </html>

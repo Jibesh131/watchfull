@@ -12,30 +12,30 @@
 
         {{-- MOVIE --}}
         @if ($type === 'movie')
-            <div class="col-md-6"  wire:ignore>
-                <label>
-                    Thumbnail
-                    <span tabindex="0" data-bs-toggle="tooltip" title="Image Dropdown Available">
-                        <i class="fa fa-info-circle cursor-pointer text-secondary"></i>
-                    </span>
-                </label>
-                <div class="input-group">
-                    <input type="file" class="form-control" wire:model="picA" accept="image/*" id="thumbnailInput" onchange="previewThumbnail(event)">
-                    <button class="btn btn-outline-primary" type="button" id="previewBtn" style="display: none;" data-bs-toggle="modal" data-bs-target="#thumbnailPreviewModal">
-                        <i class="fa fa-eye"></i>
-                    </button>
-                </div>
+        <div class="col-md-6">
+            <label for="title">Title</label>
+            <input type="text" class="form-control" wire:model="title" id="title">
+        </div>
+        
+        <div class="col-md-6"  wire:ignore>
+            <label for="thumbnail">
+                Thumbnail
+                <span tabindex="0" data-bs-toggle="tooltip" title="Image Dropdown Available">
+                    <i class="fa fa-info-circle cursor-pointer text-secondary"></i>
+                </span>
+            </label>
+            <div class="input-group">
+                <input type="file" class="form-control" wire:model="thumbnail" accept="image/*" id="thumbnail" onchange="previewThumbnail(event)">
+                <button class="btn btn-outline-primary" type="button" id="previewBtn" style="display: none;" data-bs-toggle="modal" data-bs-target="#thumbnailPreviewModal">
+                    <i class="fa fa-eye"></i>
+                </button>
             </div>
-            
-            <div class="col-md-6">
-                <label for="title">Title</label>
-                <input type="text" class="form-control" wire:model="title" id="title">
-            </div>
+        </div>
 
             <div class="col-md-6"  wire:ignore>
                 <label for="movie">
                     Movie
-                    <span tabindex="0" data-bs-toggle="tooltip" title="Image Dropdown Available">
+                    <span tabindex="0" data-bs-toggle="tooltip" title="Video Dropdown Available">
                         <i class="fa fa-info-circle cursor-pointer text-secondary"></i>
                     </span>
                 </label>
@@ -65,14 +65,33 @@
                 </select>
             </div>
 
-            <div class="col-md-6">
-                <label for="stars">Stars</label>
-                <input id="stars" type="text" class="form-control" wire:model="stars" placeholder="Type and press enter..." />
+            <div class="col-md-6" wire:ignore>
+                <label for="stars">
+                    Stars
+                    <span tabindex="0" data-bs-toggle="tooltip" title="Type and press Enter...">
+                        <i class="fa fa-info-circle cursor-pointer text-secondary"></i>
+                    </span>
+                </label>
+                <input type="text" id="stars" class="form-control" data-tagify>
             </div>
 
             <div class="col-md-6">
+                <label for="genres">
+                    Genres
+                    <span tabindex="0" data-bs-toggle="tooltip" title="Type and press Enter...">
+                        <i class="fa fa-info-circle cursor-pointer text-secondary"></i>
+                    </span>
+                </label>
+                <select class="form-select form-control" wire:model="genres" id="genres" multiple>
+                    @foreach ($allGenres as $genre)
+                        <option value="{{ $genre }}">{{ $genre }}</option>
+                    @endforeach
+                </select>
+            </div>          
+
+            <div class="col-md-6">
                 <label for="directors">Directors</label>
-                <input type="text" class="form-control" wire:model="director" id="directors">
+                <input type="text" class="form-control" wire:model="director" id="directors" data-tagify>
             </div>
 
             <div class="col-md-6">
@@ -114,33 +133,6 @@
                 <label>Release Date</label>
                 <input type="time" class="form-control" wire:model="release_dateA">
             </div>
-
-            <script>
-document.addEventListener('livewire:load', () => {
-    initTagify();
-});
-
-document.addEventListener('livewire:navigated', () => {
-    initTagify();
-});
-
-function initTagify() {
-    const input = document.querySelector("#stars");
-    if (!input || input.tagify) return;
-
-    const tagify = new Tagify(input, {
-        dropdown: { position: 'input', enabled: 0 }
-    });
-
-    tagify.on("change", () => {
-        const tags = tagify.value.map(t => t.value);
-        const component = Livewire.find(
-            input.closest('[wire\\:id]').getAttribute('wire:id')
-        );
-        component.set('stars', tags);
-    });
-}
-</script>
         @endif
 
         {{-- VIDEO --}}

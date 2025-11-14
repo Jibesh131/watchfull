@@ -12,25 +12,25 @@
 
         {{-- MOVIE --}}
         @if ($type === 'movie')
-        <div class="col-md-6">
-            <label for="title">Title</label>
-            <input type="text" class="form-control" wire:model="title" id="title">
-        </div>
-        
-        <div class="col-md-6"  wire:ignore>
-            <label for="thumbnail">
-                Thumbnail
-                <span tabindex="0" data-bs-toggle="tooltip" title="Image Dropdown Available">
-                    <i class="fa fa-info-circle cursor-pointer text-secondary"></i>
-                </span>
-            </label>
-            <div class="input-group">
-                <input type="file" class="form-control" wire:model="thumbnail" accept="image/*" id="thumbnail" onchange="previewThumbnail(event)">
-                <button class="btn btn-outline-primary" type="button" id="previewBtn" style="display: none;" data-bs-toggle="modal" data-bs-target="#thumbnailPreviewModal">
-                    <i class="fa fa-eye"></i>
-                </button>
+            <div class="col-md-6">
+                <label for="title">Title</label>
+                <input type="text" class="form-control" wire:model="title" id="title">
             </div>
-        </div>
+        
+            <div class="col-md-6"  wire:ignore>
+                <label for="thumbnail">
+                    Thumbnail
+                    <span tabindex="0" data-bs-toggle="tooltip" title="Image Dropdown Available">
+                        <i class="fa fa-info-circle cursor-pointer text-secondary"></i>
+                    </span>
+                </label>
+                <div class="input-group">
+                    <input type="file" class="form-control" wire:model="thumbnail" accept="image/*" id="thumbnail" onchange="previewThumbnail(event)">
+                    <button class="btn btn-outline-primary" type="button" id="previewBtn" style="display: none;" data-bs-toggle="modal" data-bs-target="#thumbnailPreviewModal">
+                        <i class="fa fa-eye"></i>
+                    </button>
+                </div>
+            </div>
 
             <div class="col-md-6"  wire:ignore>
                 <label for="movie">
@@ -75,18 +75,20 @@
                 <input type="text" id="stars" class="form-control" data-tagify>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-6" wire:ignore>
                 <label for="genres">
                     Genres
                     <span tabindex="0" data-bs-toggle="tooltip" title="Type and press Enter...">
                         <i class="fa fa-info-circle cursor-pointer text-secondary"></i>
                     </span>
                 </label>
-                <select class="form-select form-control" wire:model="genres" id="genres" multiple>
-                    @foreach ($allGenres as $genre)
-                        <option value="{{ $genre }}">{{ $genre }}</option>
-                    @endforeach
-                </select>
+                <input
+                    id="genres"
+                    name="genres"
+                    data-tagify-dropdown='@json(array_values($allGenres))'
+                    class="form-control"
+                    wire:model="genres"
+                />
             </div>          
 
             <div class="col-md-6">
@@ -124,14 +126,39 @@
                 <input type="text" class="form-control" wire:model="pd" id="pd">
             </div>
 
-            <div class="col-md-6">
-                <label>Duration (mins)</label>
-                <input type="number" class="form-control" wire:model="durationA">
-            </div>
-
-            <div class="col-md-6">
-                <label>Release Date</label>
-                <input type="time" class="form-control" wire:model="release_dateA">
+            <div class="col-md-12">
+                <div class="form-group">
+                    Lanch Date
+                    <div class="row">
+                        <div class="col-3 px-1">
+                            <input type="date" name="" id="" class="form-control">
+                        </div>
+                        <div class="col-3 px-1">
+                            <select name="" id="" class="form-select form-control">
+                                <option value="">Hour</option>
+                                <option value="">1</option>
+                                <option value="">11</option>
+                                <option value="">111</option>
+                            </select>
+                        </div>
+                        <div class="col-3 px-1">
+                            <select name="" id="" class="form-select form-control">
+                                <option value="">Minute</option>
+                                <option value="">2</option>
+                                <option value="">22</option>
+                                <option value="">222</option>
+                            </select>
+                        </div>
+                        <div class="col-3 px-1">
+                            <select name="" id="" class="form-select form-control">
+                                <option value="">Second</option>
+                                <option value="">3</option>
+                                <option value="">33</option>
+                                <option value="">333</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
             </div>
         @endif
 
@@ -212,8 +239,16 @@
         @endif
 
         @if ($type)
-            <div class="col-md-12 mt-3">
-                <button type="submit" class="btn btn-primary">Submit</button>
+            <div class="col-md-12 mt-3 d-flex">
+                <button type="submit" class="btn btn-dark" data-submit="draft">
+                    Save As Draft <i class="fa-solid fa-file-pen ms-1"></i>
+                </button>
+                <button type="submit" class="btn btn-secondary ms-2" data-submit="schedule">
+                    Schedule <i class="fa-regular fa-clock ms-1"></i>
+                </button>
+                <button type="submit" class="btn btn-primary ms-auto" data-submit="publish">
+                    Publish <i class="fa-solid fa-paper-plane ms-1"></i>
+                </button>
             </div>
 
             <div class="modal fade" id="thumbnailPreviewModal" tabindex="-1" aria-labelledby="thumbnailPreviewModalLabel" aria-hidden="true" wire:ignore>
@@ -236,6 +271,7 @@
                     </div>
                 </div>
             </div>
+            
         @endif
     </form>
 </div>

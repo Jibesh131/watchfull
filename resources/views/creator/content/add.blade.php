@@ -85,7 +85,6 @@
                     }
                 });
                 el.__tagify_attached = true;
-                console.log(`✨ Tagify initialized on: #${el.id || '(unnamed element)'}`);
             } catch (e) {
                 console.error('Tagify init failed:', e, el);
             }
@@ -104,7 +103,49 @@
 })();
 </script>
 
+<script>
+(() => {
+    const initTagify = () => {
+        const elements = document.querySelectorAll('[data-tagify-dropdown]');
+        elements.forEach(el => {
+            if (el.__tagify_attached) return;
 
+            let whitelist = [];
+            try {
+                whitelist = JSON.parse(el.getAttribute('data-tagify-dropdown') || "[]");
+            } catch (e) {
+                console.error('Invalid whitelist JSON:', el.getAttribute('data-tagify-dropdown'));
+            }
+            const tagify = new Tagify(el, {
+                whitelist: whitelist,
+                enforceWhitelist: false,
+                dropdown: {
+                    enabled: 1,
+                    closeOnSelect: false,
+                    position: 'input',
+                    maxItems: 100,
+                    highlightFirst: false,
+                    originalInputWidth: true
+                }
+            });
+            tagify.on('focus', () => {
+                tagify.dropdown.show.call(tagify, "");
+            });
+            el.addEventListener('click', () => {
+                tagify.dropdown.show.call(tagify, "");
+            });
+            el.__tagify_attached = tagify;
+        });
+    };
+    document.addEventListener('DOMContentLoaded', initTagify);
+    document.addEventListener('livewire:init', () => {
+        initTagify();
+        Livewire.hook('morph.after', () => {
+            setTimeout(initTagify, 50);
+        });
+    });
+    new MutationObserver(() => setTimeout(initTagify, 100)).observe(document.body, { childList: true, subtree: true });
 
-
+})();
+</script>
 @endpush

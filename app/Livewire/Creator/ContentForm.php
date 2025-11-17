@@ -14,8 +14,9 @@ class ContentForm extends Component
     public $type = 'movie';
     
     // Movie fields
-    public array $stars, $genres, $allGenres = [];
-    public $thumbnail, $title, $movie, $description, $rating, $director, $writers, $producers, $composer,
+    public array $allGenres = [];
+    public $genres, $stars, $director;
+    public $thumbnail, $title, $movie, $description, $rating, $writers, $producers, $composer,
     $cinematographer, $editor, $pd, $durationA, $release_dateA;
 
     // Video fields
@@ -24,9 +25,22 @@ class ContentForm extends Component
     // Music fields
     public $titleC, $artistC, $albumC, $genreC, $picC;
 
+    protected $rules = [
+        'type' => 'in:movie,video,music',
+        'title' => 'required',
+        'thumbnail' => 'required|image|max:1024',
+        'description' => 'required',
+    ];
+
     public function mount()
     {
         $this->allGenres = Genre::orderBy('name')->pluck('name')->toArray();
+    }
+
+    public function save()
+    {
+        $validateData = $this->validate();
+        dd($validateData);
     }
 
     public function render()

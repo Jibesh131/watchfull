@@ -69,83 +69,55 @@
     }
 </script>
 <script>
-(() => {
-    const initTagify = () => {
-        const inputs = document.querySelectorAll('input[data-tagify], textarea[data-tagify]');
-        if (!inputs.length || !window.Tagify) return;
+    document.addEventListener("livewire:init", () => {
+        function initTagify() {
+            document.querySelectorAll("[data-tagify]").forEach(input => {
+                if (input._tagify) return;
 
-        inputs.forEach(el => {
-            if (el.__tagify_attached) return;
+                const tagify = new Tagify(input);
+                input._tagify = tagify;
 
-            try {
-                new Tagify(el, {
-                    dropdown: {
-                        enabled: 0,
-                        position: 'input'
-                    }
+                tagify.on("change", e => {
+                    input.value = e.detail.value;
+                    input.dispatchEvent(new Event("input"));
                 });
-                el.__tagify_attached = true;
-            } catch (e) {
-                console.error('Tagify init failed:', e, el);
-            }
-        });
-    };
+            });
+        }
 
-    document.addEventListener('DOMContentLoaded', initTagify);
+        function initTagifyDropdown() {
+            document.querySelectorAll("[data-tagify-dropdown]").forEach(input => {
+                if (input._tagify) return;
 
-    document.addEventListener('livewire:init', () => {
+                let list = [];
+                try { list = JSON.parse(input.dataset.tagifyDropdown || "[]"); } 
+                catch { console.error("Invalid Tagify JSON"); }
+
+                const tagify = new Tagify(input, {
+                    whitelist: list,
+                    dropdown: { enabled: 1, closeOnSelect: false }
+                });
+
+                input._tagify = tagify;
+
+                tagify.on("focus", () => tagify.dropdown.show());
+                input.addEventListener("click", () => tagify.dropdown.show());
+
+                tagify.on("change", e => {
+                    input.value = e.detail.value;  
+                    input.dispatchEvent(new Event("input"));
+                });
+            });
+        }
+
         initTagify();
-        Livewire.hook('morph.after', () => setTimeout(initTagify, 50));
-    });
+        initTagifyDropdown();
 
-    new MutationObserver(() => setTimeout(initTagify, 100))
-        .observe(document.body, { childList: true, subtree: true });
-})();
+        Livewire.hook("morph.updated", () => {
+            initTagify();
+            initTagifyDropdown();
+        });
+
+    });
 </script>
 
-<script>
-(() => {
-    const initTagify = () => {
-        const elements = document.querySelectorAll('[data-tagify-dropdown]');
-        elements.forEach(el => {
-            if (el.__tagify_attached) return;
-
-            let whitelist = [];
-            try {
-                whitelist = JSON.parse(el.getAttribute('data-tagify-dropdown') || "[]");
-            } catch (e) {
-                console.error('Invalid whitelist JSON:', el.getAttribute('data-tagify-dropdown'));
-            }
-            const tagify = new Tagify(el, {
-                whitelist: whitelist,
-                enforceWhitelist: false,
-                dropdown: {
-                    enabled: 1,
-                    closeOnSelect: false,
-                    position: 'input',
-                    maxItems: 100,
-                    highlightFirst: false,
-                    originalInputWidth: true
-                }
-            });
-            tagify.on('focus', () => {
-                tagify.dropdown.show.call(tagify, "");
-            });
-            el.addEventListener('click', () => {
-                tagify.dropdown.show.call(tagify, "");
-            });
-            el.__tagify_attached = tagify;
-        });
-    };
-    document.addEventListener('DOMContentLoaded', initTagify);
-    document.addEventListener('livewire:init', () => {
-        initTagify();
-        Livewire.hook('morph.after', () => {
-            setTimeout(initTagify, 50);
-        });
-    });
-    new MutationObserver(() => setTimeout(initTagify, 100)).observe(document.body, { childList: true, subtree: true });
-
-})();
-</script>
 @endpush

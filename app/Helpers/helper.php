@@ -61,3 +61,16 @@ if (!function_exists('format_amount_without_commas')) {
         return $formatted;
     }
 }
+
+if (! function_exists('extract_tagify_values')) {
+    function extract_tagify_values($data)
+    {
+        $starsArray = json_decode($data, true);
+        if (!is_array($starsArray)) {
+            return [];
+        }
+        return array_map(function ($star) {
+            return $star['value'] ?? null;
+        }, $starsArray);
+    }
+}

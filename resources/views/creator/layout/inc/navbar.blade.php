@@ -79,7 +79,7 @@
                             </a>
                             <a href="#">
                                 <div class="notif-img">
-                                <img src="assets/img/profile2.jpg" alt="Img Profile">
+                                <img src="" alt="Img Profile">
                                 </div>
                                 <div class="notif-content">
                                 <span class="block">
@@ -110,7 +110,7 @@
                     <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#"
                         aria-expanded="false">
                         <div class="avatar-sm">
-                            <img src="{{ asset('admin/img/profile.jpg') }}" alt="..."
+                            <img src="" alt="..."
                                 class="avatar-img rounded-circle">
                         </div>
                         <span class="profile-username">
@@ -123,7 +123,7 @@
                             <li>
                                 <div class="user-box">
                                     <div class="avatar-lg">
-                                        <img src="{{ asset('assets/admin/img/profile.jpg') }}" alt="image profile"
+                                        <img src="" alt="image profile"
                                             class="avatar-img rounded">
                                     </div>
                                     <div class="u-text">

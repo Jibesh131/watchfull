@@ -1,5 +1,15 @@
 <div>
     <form wire:submit.prevent="save" class="row g-3">
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <div class="col-md-6">
             <label for="type">Type</label>
             <select class="form-select form-control" wire:model.live="type" id="type">
@@ -11,54 +21,55 @@
             @error('type') <span class="text-danger">{{ $message }}</span> @enderror
         </div>
 
-        
         {{-- MOVIE --}}
         @if ($type === 'movie')
             <div class="col-md-6">
-                <label for="title">Title</label>
+                <label for="title" class="required">Title</label>
                 <input type="text" class="form-control" wire:model="title" id="title">
                 @error('title') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
         
-            <div class="col-md-6"  wire:ignore>
-                <label for="thumbnail">
-                    Thumbnail
-                    <span tabindex="0" data-bs-toggle="tooltip" title="Image Dropdown Available">
-                        <i class="fa fa-info-circle cursor-pointer text-secondary"></i>
-                    </span>
-                </label>
+            <div class="col-md-6" wire:ignore>
+                <label for="thumbnail" class="required"> Thumbnail </label>
+                <span tabindex="0" data-bs-toggle="tooltip" class="ms-2" title="Image Dropdown Available">
+                    <i class="fa fa-info-circle cursor-pointer text-secondary"></i>
+                </span>
+
                 <div class="input-group">
-                    <input type="file" class="form-control" wire:model="thumbnail" accept="image/*" id="thumbnail" onchange="previewThumbnail(event)">
-                    <button class="btn btn-outline-primary" type="button" id="previewBtn" style="display: none;" data-bs-toggle="modal" data-bs-target="#thumbnailPreviewModal">
+                    <input type="file" class="form-control" wire:model="thumbnail" accept="image/*" id="thumbnail" onchange="previewThumbnail(event, 'thumbnailPreviewBtn', 'thumbnailPreviewImage')">
+                    <button class="btn btn-outline-primary" type="button" id="thumbnailPreviewBtn" style="display: none;"
+                        data-bs-toggle="modal" data-bs-target="#thumbnailPreviewModal">
                         <i class="fa fa-eye"></i>
                     </button>
                 </div>
-                @error('thumbnail') <span class="text-danger">{{ $message }}</span> @enderror
+
+                @error('thumbnail')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
             </div>
 
-            <div class="col-md-6"  wire:ignore>
-                <label for="movie">
-                    Movie
-                    <span tabindex="0" data-bs-toggle="tooltip" title="Video Dropdown Available">
-                        <i class="fa fa-info-circle cursor-pointer text-secondary"></i>
-                    </span>
-                </label>
-                <div class="input-group">
-                    <input type="file" class="form-control" wire:model="movie" accept="video/mp4,video/x-m4v,video/*" id="movie" onchange="previewThumbnail(event)">
-                    <button class="btn btn-outline-primary" type="button" id="previewBtn" style="display: none;" data-bs-toggle="modal" data-bs-target="#thumbnailPreviewModal">
+            <div class="col-md-6">
+                <label for="movie" class="required"> Movie </label>
+                <span tabindex="0" data-bs-toggle="tooltip" class="ms-2" title="Video Dropdown Available">
+                    <i class="fa fa-info-circle cursor-pointer text-secondary"></i>
+                </span>
+                <div class="input-group" wire:ignore>
+                    <input type="file" class="form-control" wire:model="movie" accept="video/mp4,video/x-m4v,video/*" id="movie" onchange="previewThumbnail(event, 'moviePreviewBtn', 'moviePreviewImage')">
+                    <button class="btn btn-outline-primary" type="button" id="moviePreviewBtn" style="display: none;" data-bs-toggle="modal" data-bs-target="#thumbnailPreviewModal">
                         <i class="fa fa-eye"></i>
                     </button>
                 </div>
+                @error('movie') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
 
             <div class="col-md-12">
-                <label for="description">Sort Description</label>
+                <label for="description" class="required">Sort Description</label>
                 <textarea wire:model="description" id="description" cols="30" rows="4" class="form-control"></textarea>
                 @error('description') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
 
             <div class="col-md-6">
-                <label for="rating">Official Rating </label>
+                <label for="rating" class="required">Age Rating</label>
                 <select class="form-select form-control" wire:model="rating" id="rating">
                     <option value="">-- Select a rating --</option>
                     <option value="U">U / G: Unrestricted Public Exhibition (All Ages)</option>
@@ -67,31 +78,40 @@
                     <option value="A">A / R: Adults Only (18+)</option>
                     <option value="S">S: Specialized Audiences Only (Not for Public)</option>
                 </select>
+                @error('rating') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
 
-            <div class="col-md-6" wire:ignore>
-                <label for="stars">
-                    Stars
-                    <span tabindex="0" data-bs-toggle="tooltip" title="Type and press Enter...">
-                        <i class="fa fa-info-circle cursor-pointer text-secondary"></i>
-                    </span>
-                </label>
-                <input type="text" id="stars" class="form-control" data-tagify wire:model="stars">
+            <div class="col-md-6">
+                <label for="stars" class="required"> Stars </label>
+                <span tabindex="0" data-bs-toggle="tooltip" class="ms-2" title="Type and press Enter...">
+                    <i class="fa fa-info-circle cursor-pointer text-secondary"></i>
+                </span>
+                <div class="input-group" wire:ignore>
+                    <input type="text" id="stars" class="form-control" data-tagify wire:model="stars">
+                </div>
+                @error('stars') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
 
             <div class="col-md-6" wire:ignore>
                 <label for="genres">
                     Genres
-                    <span tabindex="0" data-bs-toggle="tooltip" title="Type and press Enter...">
+                    <span tabindex="0" data-bs-toggle="tooltip" class="ms-2" title="Type and press Enter...">
                         <i class="fa fa-info-circle cursor-pointer text-secondary"></i>
                     </span>
                 </label>
-                <input id="genres" name="genres" data-tagify-dropdown='@json(array_values($allGenres))' class="form-control" wire:model="genres"/>
+                <input id="genres" name="genres" wire:model="genres" data-hidden-input="true" data-tagify-dropdown='@json(array_values($allGenres))' class="form-control"/>
+                @error('genres') <span class="text-danger">{{ $message }} - {{$genres}}</span> @enderror
             </div>          
 
             <div class="col-md-6">
-                <label for="directors">Directors</label>
-                <input type="text" id="directors" class="form-control" wire:model="director" data-tagify>
+                <label for="directors" class="required"> Directors </label>
+                <span tabindex="0" data-bs-toggle="tooltip" class="ms-2" title="Type and press Enter...">
+                    <i class="fa fa-info-circle cursor-pointer text-secondary"></i>
+                </span>
+                <div class="input-group" wire:ignore>
+                    <input type="text" id="directors" class="form-control" data-tagify wire:model="director">
+                </div>
+                @error('stars') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
 
             <div class="col-md-6" wire:ignore>
@@ -138,7 +158,7 @@
             <div class="col-md-6"  wire:ignore>
                 <label>
                     Thumbnail
-                    <span tabindex="0" data-bs-toggle="tooltip" title="Image Dropdown Available">
+                    <span tabindex="0" data-bs-toggle="tooltip" class="ms-2" title="Image Dropdown Available">
                         <i class="fa fa-info-circle cursor-pointer text-secondary"></i>
                     </span>
                 </label>
@@ -153,7 +173,7 @@
             <div class="col-md-6"  wire:ignore>
                 <label for="video">
                     Upload Video
-                    <span tabindex="0" data-bs-toggle="tooltip" title="File Dropdown Available">
+                    <span tabindex="0" data-bs-toggle="tooltip" class="ms-2" title="File Dropdown Available">
                         <i class="fa fa-info-circle cursor-pointer text-secondary"></i>
                     </span>
                 </label>
@@ -186,7 +206,7 @@
             <div class="col-md-6"  wire:ignore>
                 <label>
                     Thumbnail
-                    <span tabindex="0" data-bs-toggle="tooltip" title="Image Dropdown Available">
+                    <span tabindex="0" data-bs-toggle="tooltip" class="ms-2" title="Image Dropdown Available">
                         <i class="fa fa-info-circle cursor-pointer text-secondary"></i>
                     </span>
                 </label>

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('thumbnail')->nullable();
             $table->string('content_file')->nullable();
             $table->text('description')->nullable();
-            $table->string('content_rating', 50)->nullable();
+            $table->string('age_rating', 50)->nullable();
             $table->json('stars')->nullable();
             $table->json('genres')->nullable();
             $table->json('directors')->nullable();
@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('composer', 100)->nullable();
             $table->string('editor', 100)->nullable();
             $table->string('pd', 100)->comment('Production Designer')->nullable();
-            $table->enum('status', ['published', 'draft', 'schedule', 'conceal'])->default('conceal');
+            $table->enum('status', ['published', 'draft', 'schedule', 'hidden', 'pending'])->default('pending');
             $table->timestamps();
         });
     }

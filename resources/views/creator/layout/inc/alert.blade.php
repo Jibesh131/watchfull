@@ -1,24 +1,30 @@
-@if (session()->has('success'))
+{{-- @if (session()->has('message'))
     @php
-        $msg = session('success');
-        $icon = 'success';
-        session()->forget('success');
-    @endphp
-@elseif (session()->has('error'))
-    @php
-        $msg = session('error');
-        $icon = 'error';
-        session()->forget('error');
+        $msg = session('message');
+        $icon = session('type') ?? 'info';
+        $title = session('title') ?? '';
     @endphp
 @endif
 
 @if (!empty($msg))
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            Swal.fire({
-                html: "{{ $msg }}",
-                icon: "{{ $icon }}"
-            });
-        });
+        showNotify('{{ $icon }}', '{{ $msg }}', '{{ $title }}');
     </script>
-@endif
+@endif --}}
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    Livewire.on('notify', ({ type, message, title }) => {
+        showNotify(type, message, title);
+    });
+
+    @if(session('notify'))
+        let n = @json(session('notify'));
+        showNotify(n.type, n.message, n.title);
+    @endif
+
+});
+</script>
+
+
+

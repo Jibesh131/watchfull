@@ -38,26 +38,44 @@
     <link rel="stylesheet" href="{{ asset('admin/css/bootstrap.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('admin/css/plugins.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('admin/css/kaiadmin.min.css') }}" />
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.22.0/dist/sweetalert2.min.css" rel="stylesheet">
 
 
     <script src="{{ asset('admin/js/core/jquery-3.7.1.min.js') }}"></script>
     <script src="{{ asset('admin/js/core/popper.min.js') }}"></script>
     <script src="{{ asset('admin/js/core/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('admin/js/core/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('admin/js/plugin/bootstrap-notify/bootstrap-notify.min.js') }}"></script>
     <script src="{{ asset('admin/js/plugin/chart.js/chart.min.js') }}"></script>
-    <script src="{{ asset('common/js/main.js') }}"></script>
+    <script src="{{ asset('mix/js/main.js') }}"></script>
     <script src=" https://cdn.jsdelivr.net/npm/sweetalert2@11.22.0/dist/sweetalert2.all.min.js "></script>
-    <link href=" https://cdn.jsdelivr.net/npm/sweetalert2@11.22.0/dist/sweetalert2.min.css " rel="stylesheet">
-    
+
     @livewireStyles
 
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
     @stack('cdn')
+    <style>
+        label.required::after {
+            content: " *";
+            color: red;
+        }
+
+        .alert .close {
+            border: 0;
+            font-size: 25px;
+            opacity: 0.6;
+        }
+
+        .alert .close:hover {
+            opacity: 1;
+        }
+    </style>
     @stack('css')
-    
+
 </head>
 
 <body>
@@ -68,7 +86,7 @@
             @include('creator.layout.inc.navbar')
             <div class="container">
                 <div class="page-inner">
-                    @include('creator.layout.inc.breadcrumbs')    
+                    @include('creator.layout.inc.breadcrumbs')
                     <div class="row">
                         <div class="col-12">
                             <div class="card p-3">
@@ -113,8 +131,38 @@
             $(".datepicker").datepicker();
             $(".select2").select2();
         })
+
+        function showNotify(type, message, title = '', delay = 4500) {
+
+            const icons = {
+                primary: 'fas fa-star',
+                secondary: 'fas fa-circle',     
+                success: 'fas fa-check',        
+                info: 'fas fa-info-circle',
+                warning: 'fas fa-exclamation-triangle',
+                danger: 'fa-solid fa-circle-exclamation',
+                black: 'fas fa-moon',
+                default: 'fas fa-bell'
+            };
+
+            const iconClass = icons[type] || icons.default;
+            const titleHtml = title ? `<strong>${title}</strong><br>` : '';
+
+            $.notify({
+                icon: iconClass,
+                title: titleHtml,
+                message: message
+            }, {
+                type: type,
+                allow_dismiss: true,
+                delay: delay,
+                placement: {
+                    from: "top",
+                    align: "right"
+                },
+            });
+        }
     </script>
-    
     <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
     @livewireScripts
     @stack('js')

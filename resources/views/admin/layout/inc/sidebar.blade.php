@@ -2,7 +2,7 @@
     <div class="sidebar-logo">
         <div class="logo-header" data-background-color="dark">
             <a href="{{ route('index') }}" class="logo" target="_blank">
-                <img src="{{ asset('assets/frontend/images/logo.png') }}" alt="navbar"
+                <img src="{{ asset('assets/mix/images/logo.png') }}" alt="navbar"
                     class="navbar-brand" height="20">
             </a>
             <div class="nav-toggle">

@@ -3,7 +3,7 @@
     <ul class="breadcrumbs mb-3">
         @if (!empty($links))
             <li class="nav-home">
-                <a href="{{ route('admin.index') }}">
+                <a href="{{ route('creator.dashboard') }}">
                     <i class="icon-home"></i>
                 </a>
             </li>

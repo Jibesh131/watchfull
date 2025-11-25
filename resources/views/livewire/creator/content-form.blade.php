@@ -1,7 +1,7 @@
 <div>
     <form wire:submit.prevent="save" class="row g-3">
         <div class="col-md-6">
-            <label for="type">Type - {{ $itemId }}</label>
+            <label for="type">Type</label>
             <select class="form-select form-control" wire:model.live="type" id="type" @disabled($itemId)>>
                 <option value="">-- Choose --</option>
                 <option value="movie">Movie</option>
@@ -74,8 +74,8 @@
             </div>
 
             <div class="col-md-6">
-                <label for="rating" class="required">Age Rating</label>
-                <select class="form-select form-control" wire:model="rating" id="rating">
+                <label for="age_rating" class="required">Age Rating</label>
+                <select class="form-select form-control" wire:model="age_rating" id="age_rating">
                     <option value="">-- Select a rating --</option>
                     <option value="U">U / G: Unrestricted Public Exhibition (All Ages)</option>
                     <option value="UA7+">UA 7+ / PG: Parental Guidance Suggested</option>
@@ -83,7 +83,7 @@
                     <option value="A">A / R: Adults Only (18+)</option>
                     <option value="S">S: Specialized Audiences Only (Not for Public)</option>
                 </select>
-                @error('rating')
+                @error('age_rating')
                     <span class="text-danger">{{ $message }}</span>
                 @enderror
             </div>

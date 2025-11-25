@@ -62,7 +62,7 @@
                                     class="img-thumbnail" width="80">
                             </td>
                             <td>
-                                <p>{{ setLengthLimit($content?->title, 15) }}</p>
+                                <span data-bs-toggle="tooltip" data-bs-title="{{ $content?->title ?? '' }}">{{ setLengthLimit($content?->title, 15) }}</span>
                             </td>
                             <td>
                                 <span class="text-capitalize">{{ $content?->type ?? '' }}</span>

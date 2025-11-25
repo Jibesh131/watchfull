@@ -30,7 +30,7 @@ class ContentForm extends Component
     public $stars = [];
     public $director;
     public $description;
-    public $rating;
+    public $age_rating;
     public $writers;
     public $producers;
     public $composer;
@@ -77,7 +77,7 @@ class ContentForm extends Component
         $this->thumbnail_path = $content->thumbnail;
         $this->movie_path = $content->content_file;
         $this->description = $content->description;
-        $this->rating = $content->age_rating;
+        $this->age_rating = $content->age_rating;
         $this->stars = json_decode($content->stars, true) ?? [];
         $this->genres = json_decode($content->genres, true) ?? [];
         $this->director = json_decode($content->director, true) ?? null;
@@ -118,10 +118,17 @@ class ContentForm extends Component
 
         if ($this->type === 'movie') {
             return array_merge($common, [
-                'rating' => 'required',
+                'age_rating' => 'required',
                 'stars' => 'required',
                 'thumbnail' => $this->itemId ? 'nullable|image|max:1024' : 'required|image|max:1024',
                 'movie' => $this->itemId ? 'nullable|mimes:mp4,mov,avi|max:' . (1024 * 10) : 'required|mimes:mp4,mov,avi|max:' . (1024 * 10),
+                'director' => 'nullable',
+                'writers' => 'nullable',
+                'producers' => 'nullable',
+                'composer' => 'nullable',
+                'cinematographer' => 'nullable',
+                'editor' => 'nullable',
+                'pd' => 'nullable',
             ]);
         }
 
@@ -152,7 +159,7 @@ class ContentForm extends Component
     {
         $validated = $this->validate($this->rules(), $this->messages);
 
-        // dd($validated);
+        dd($validated);
         DB::beginTransaction();
 
         try {
@@ -174,7 +181,7 @@ class ContentForm extends Component
                 $content->type = $validated['type'] ?? $content->type;
                 $content->title = $validated['title'] ?? $content->title;
                 $content->description = $validated['description'] ?? $content->description;
-                $content->age_rating = $validated['rating'] ?? $content->age_rating;
+                $content->age_rating = $validated['age_rating'] ?? $content->age_rating;
 
                 if ($imgPath) {
                     if ($content->thumbnail && Storage::disk('public')->exists($content->thumbnail)) {
@@ -217,7 +224,7 @@ class ContentForm extends Component
                 $content->type = $validated['type'];
                 $content->title = $validated['title'];
                 $content->description = $validated['description'];
-                $content->age_rating = $validated['rating'] ?? null;
+                $content->age_rating = $validated['age_rating'] ?? null;
                 $content->thumbnail = $imgPath;
                 $content->content_file = $moviePath;
                 $content->stars = isset($validated['stars']) ? json_encode($validated['stars']) : json_encode([]);

@@ -2,9 +2,13 @@
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
+use Vinkla\Hashids\Facades\Hashids;
 
-if(!function_exists('route_details')){
-    function route_details($route){
+use function PHPUnit\Framework\isNull;
+
+if (!function_exists('route_details')) {
+    function route_details($route)
+    {
         $route = Route::getRoutes()->getByName($route);
 
         if ($route) {
@@ -72,5 +76,33 @@ if (! function_exists('extract_tagify_values')) {
         return array_map(function ($star) {
             return $star['value'] ?? null;
         }, $starsArray);
+    }
+}
+
+if (! function_exists('hash_encode')) {
+    function hash_encode($id)
+    {
+        return Hashids::encode($id);
+    }
+}
+
+if (! function_exists('hash_decode')) {
+    function hash_decode($hash)
+    {
+        $decoded = Hashids::decode($hash);
+        return $decoded[0] ?? null;
+    }
+}
+
+if (! function_exists('setLengthLimit')) {
+    function setLengthLimit($str, $len, $ifNull = '--')
+    {
+        if (is_null($str) || $str === '') {
+            return $ifNull;
+        }
+        if (strlen($str) <= $len + 3) {
+            return $str;
+        }
+        return substr($str, 0, $len) . '...';
     }
 }

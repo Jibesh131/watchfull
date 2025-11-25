@@ -14,3 +14,4 @@ Route::post('/admin/login', [AuthController::class, 'adminLoginPost'])->name(('a
 // ========== CREATOR ==========
 Route::get('/creator/login', [AuthController::class, 'creatorLoginView'])->name(('auth.creator.login.view'));
 Route::post('/creator/login', [AuthController::class, 'creatorLoginPost'])->name(('auth.creator.login.post'));
+Route::get('/creator/logout', [AuthController::class, 'creatorLogout'])->name(('auth.creator.logout'));

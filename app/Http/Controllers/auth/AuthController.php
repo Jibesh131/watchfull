@@ -9,43 +9,27 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    public function userLoginView(){
+    public function userLoginView()
+    {
         return view('auth.user.login');
     }
 
-    public function adminLoginView()
-    {
-        return view('auth.admin.login');
-    }
+    public function creatorLogout(Request $request){
+        Auth::guard()->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
-    public function adminLoginPost(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email|exists:users,email',
-            'password' => 'required|min:8',
-        ], 
-        [
-            'email.required' => 'Email is required.',
-            'email.email' => 'Please enter a valid email address.',
-            'email.exists' => 'This email is not registered.',
-            'password.required' => 'Password is required.',
-            'password.min' => 'Password must be at least 8 characters.',
-        ]);
-
-        if(Auth::attempt($request->only('email','password'))){
-            return redirect()->intended(route('admin.dashboard'));
-        }
+        return redirect()->route('index');
         
-        return back()->withErrors([
-            'email' => 'Invalid credentials.'
-        ]);
     }
 
-    public function creatorLoginView(){
+    public function creatorLoginView()
+    {
         return view('auth.creator.login');
     }
 
-    public function creatorLoginPost(Request $request){
+    public function creatorLoginPost(Request $request)
+    {
         $request->validate(
             [
                 'email' => 'required|email|exists:users,email',
@@ -74,5 +58,35 @@ class AuthController extends Controller
         return back()->withErrors([
             'email' => 'Invalid credentials.'
         ]);
+    }
+
+    public function adminLoginPost(Request $request)
+    {
+        $request->validate(
+            [
+                'email' => 'required|email|exists:users,email',
+                'password' => 'required|min:8',
+            ],
+            [
+                'email.required' => 'Email is required.',
+                'email.email' => 'Please enter a valid email address.',
+                'email.exists' => 'This email is not registered.',
+                'password.required' => 'Password is required.',
+                'password.min' => 'Password must be at least 8 characters.',
+            ]
+        );
+
+        if (Auth::attempt($request->only('email', 'password'))) {
+            return redirect()->intended(route('admin.dashboard'));
+        }
+
+        return back()->withErrors([
+            'email' => 'Invalid credentials.'
+        ]);
+    }
+
+    public function adminLoginView()
+    {
+        return view('auth.admin.login');
     }
 }

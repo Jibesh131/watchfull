@@ -28,8 +28,8 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('creator.content') }}">
-                        <i class="fa-solid fa-arrows-to-circle"></i>
+                    <a href="{{ route('creator.content.index') }}">
+                        <i class="fa-solid fa-paperclip"></i>
                         <p>My Content</p>
                     </a>
                 </li>

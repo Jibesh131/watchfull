@@ -39,25 +39,25 @@
     <link rel="stylesheet" href="{{ asset('admin/css/plugins.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('admin/css/kaiadmin.min.css') }}" />
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.22.0/dist/sweetalert2.min.css" rel="stylesheet">
-
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css" />
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
+    
+    @livewireStyles
 
     <script src="{{ asset('admin/js/core/jquery-3.7.1.min.js') }}"></script>
     <script src="{{ asset('admin/js/core/popper.min.js') }}"></script>
-    <script src="{{ asset('admin/js/core/bootstrap.min.js') }}"></script>
     <script src="{{ asset('admin/js/core/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('admin/js/plugin/bootstrap-notify/bootstrap-notify.min.js') }}"></script>
     <script src="{{ asset('admin/js/plugin/chart.js/chart.min.js') }}"></script>
     <script src="{{ asset('mix/js/main.js') }}"></script>
-    <script src=" https://cdn.jsdelivr.net/npm/sweetalert2@11.22.0/dist/sweetalert2.all.min.js "></script>
-
-    @livewireStyles
-
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css" />
+    <script src="{{ asset('admin/js/kaiadmin.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.22.0/dist/sweetalert2.all.min.js "></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
+
     @stack('cdn')
+    
     <style>
         label.required::after {
             content: " *";
@@ -104,14 +104,14 @@
             $('#logoutBtn').on('click', function() {
                 Swal.fire({
                     title: 'Are you sure you want to logout?',
-                    text: "You will be logged out of the admin panel.",
+                    // text: "You will be logged out of the admin panel.",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonText: 'Yes, logout',
                     cancelButtonText: 'Cancel',
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        window.location.href = "{{ '' }}";
+                        window.location.href = "{{ route('auth.creator.logout') }}";
                     }
                 });
             })

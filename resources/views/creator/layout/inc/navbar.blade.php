@@ -110,12 +110,12 @@
                     <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#"
                         aria-expanded="false">
                         <div class="avatar-sm">
-                            <img src="" alt="..."
+                            <img src="{{ asset('mix/image/avatar.png') }}" alt="..."
                                 class="avatar-img rounded-circle">
                         </div>
                         <span class="profile-username">
-                            {{-- <span class="op-7">Hi,</span> <span
-                                class="fw-bold">{{ auth('admin')->user()?->name ?? '' }}</span> --}}
+                            <span class="op-7">Hi,</span> 
+                            <span class="fw-bold">{{ auth()->user()?->name ?? '' }}</span>
                         </span>
                     </a>
                     <ul class="dropdown-menu dropdown-user animated fadeIn">
@@ -123,12 +123,12 @@
                             <li>
                                 <div class="user-box">
                                     <div class="avatar-lg">
-                                        <img src="" alt="image profile"
+                                        <img src="{{ asset('mix/image/avatar.png') }}" alt="image profile"
                                             class="avatar-img rounded">
                                     </div>
                                     <div class="u-text">
-                                        {{-- <h4>{{ auth('admin')->user()?->name ?? '' }}</h4>
-                                        <p class="text-muted">{{ auth('admin')->user()?->email ?? '' }}</p> --}}
+                                        <h4>{{ auth()->user()?->name ?? '' }}</h4>
+                                        <p class="text-muted">{{ auth()->user()?->email ?? '' }}</p>
                                     </div>
                                 </div>
                             </li>

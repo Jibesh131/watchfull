@@ -36,7 +36,7 @@
 
 @section('content')
     <div class="card-body">
-        <livewire:creator.content-form />
+        <livewire:creator.content-form :id='$id ?? null' />
     </div>
 @endsection
 
@@ -64,6 +64,17 @@
                 previewImage.attr('src', '');
             }
         }
+
+        // Load existing image on edit (if available)
+        document.addEventListener("DOMContentLoaded", function() {
+            const btn = $('#thumbnailPreviewBtn');
+            const src = btn.data('src');
+
+            if (src) {
+                $('#thumbnailPreviewImage').attr('src', src);
+                btn.show();
+            }
+        });
     </script>
     <script>
         document.addEventListener("livewire:init", () => {
@@ -128,5 +139,14 @@
 
         });
     </script>
+    <script>
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('[data-bs-target="#videoPreviewModal"]')) {
+                const btn = e.target.closest('button');
+                const src = btn.getAttribute('data-src');
+                document.querySelector('#videoPreviewPlayer source').src = src;
+                document.querySelector('#videoPreviewPlayer').load();
+            }
+        });
+    </script>
 @endpush
-

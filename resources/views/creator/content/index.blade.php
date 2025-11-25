@@ -33,7 +33,7 @@
         </div>
 
         <!-- Add New Button on the Right -->
-        <a href="{{ route('creator.add.content') }}">
+        <a href="{{ route('creator.content.add') }}">
             <button class="btn btn-primary">
                 <i class="fa fa-plus me-1"></i> Add New
             </button>
@@ -61,25 +61,34 @@
                                 <img src="{{ asset($content?->thumbnail ? 'storage/' . $content->thumbnail : 'mix/image/demo.png') }}"
                                     class="img-thumbnail" width="80">
                             </td>
-                            <td>{{ $content?->title ?? '' }}</td>
-                            <td>{{ $content?->type ?? '' }}</td>
-                            <td>{{ format_date($content?->created_at) ?? '--' }}</td>
+                            <td>
+                                <p>{{ setLengthLimit($content?->title, 15) }}</p>
+                            </td>
+                            <td>
+                                <span class="text-capitalize">{{ $content?->type ?? '' }}</span>
+                            </td>
+                            <td>
+                                <span>{{ format_date($content?->created_at, 'jS M, Y') ?? '--' }}</span>
+                            </td>
                             <td>
                                 @php
                                     $status = $content?->status ?? '';
-                                    if($status == 'published') $x = 'success';
-                                    elseif ($status == 'schedule') $x = 'secondary';
-                                    elseif ($status == 'draft') $x = 'dark';
-                                    elseif ($status == 'hidden') $x = 'warning';
-                                    elseif ($status == 'pending') $x = 'secondary-gradient';
+                                    if($status == 'published') $x = 'bg-success-gradient';
+                                    elseif ($status == 'schedule') $x = 'bg-primary-gradient';
+                                    elseif ($status == 'draft') $x = 'bg-black-gradient';
+                                    elseif ($status == 'hidden') $x = 'bg-warning-gradient';
+                                    elseif ($status == 'pending') $x = 'bg-secondary-gradient';
                                     else 
                                 @endphp
-                                <span class="badge bg-success">Published</span>
+                                <span class="badge text-uppercase {{ $x }}">{{ $status }}</span>
                             </td>
                             <td>
-                                <button class="btn btn-sm btn-outline-primary"><i class="fa fa-edit"></i></button>
-                                <button class="btn btn-sm btn-outline-danger"><i class="fa fa-trash"></i></button>
-                                <button class="btn btn-sm btn-outline-secondary"><i class="fa fa-gear"></i></button>
+                                @php
+                                    $hid = hash_encode($content?->id ?? 0);
+                                @endphp
+                                <a href="{{ route('creator.content.edit', $hid) }}" class="btn btn-sm btn-outline-primary py-1 px-2 fs-6"><i class="fa fa-edit"></i></a>
+                                <a href="{{ route('creator.content.delete', $hid) }}" class="btn btn-sm btn-outline-danger py-1 px-2 fs-6"><i class="fa fa-trash"></i></a>
+                                <a href="{{ route('creator.content.edit', $hid) }}" class="btn btn-sm btn-outline-secondary py-1 px-2 fs-6"><i class="fa fa-gear"></i></a>
                             </td>
                         </tr>
                     @empty

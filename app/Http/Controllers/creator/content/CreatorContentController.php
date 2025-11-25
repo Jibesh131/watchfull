@@ -31,16 +31,35 @@ class CreatorContentController extends Controller
     public function add() {
         $title = 'Add Content';
         $links = [
-            // [
-            //     'url' => route('admin.coordinator.index'),
-            //     'name' => 'Coordinators'
-            // ],
-            // [
-            //     'name' => $title
-            // ]
+            [
+                'url' => route('creator.content.index'),
+                'name' => 'My Contents'
+            ],
+            [
+                'name' => $title
+            ]
         ];
-        // $applications = Application::where('status', '!=', 'draft')->orderBy('submitted_at', 'DESC')->get();
-        $genras =  Genre::orderBy('name')->pluck('name')->toArray();
-        return view('creator.content.add', compact('title', 'links', 'genras'));
+        return view('creator.content.add', compact('title', 'links'));
+    }
+
+    public function edit($id)
+    {
+        $title = 'Edit Content';
+        $links = [
+            [
+                'url' => route('creator.content.index'),
+                'name' => 'My Contents'
+            ],
+            [
+                'name' => $title
+            ]
+        ];
+
+        $id = hash_decode($id);
+        return view('creator.content.add', compact('title', 'links', 'id'));
+    }
+
+    public function delete($id){
+        dd(hash_decode($id));
     }
 }

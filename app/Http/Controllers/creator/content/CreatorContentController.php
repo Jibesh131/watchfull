@@ -18,12 +18,31 @@ class CreatorContentController extends Controller
                 'name' => $title
             ]
         ];
+
         $keyword = request()->keyword ?? '';
-        
-        $contents = Content::orderBy('created_at', 'desc');
+        $type = request()->type ?? '';
+        $status = request()->status ?? '';
+        $date = request()->date ?? '';
+
+        $contents = Content::query();
+
         if (!blank($keyword)) {
             $contents->where('title', 'like', '%' . $keyword . '%');
         }
+        if(!blank($type)){
+            $contents->where('type', 'like', $type);
+        }
+        if(!blank($status)){
+            $contents->status($status);
+        }
+        match ($date) {
+            'newest' => $contents->orderBy('created_at', 'desc'),
+            'oldest' => $contents->orderBy('created_at', 'asc'),
+            'last7'  => $contents->where('created_at', '>=', now()->subDays(7)),
+            'last30' => $contents->where('created_at', '>=', now()->subDays(30)),
+            default  => $contents->orderBy('created_at', 'desc'),
+        };
+        
         $contents = $contents->get();
         return view('creator.content.index', compact('title', 'search', 'links', 'contents'));
     }

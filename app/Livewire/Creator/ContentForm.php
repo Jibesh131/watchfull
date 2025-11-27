@@ -158,8 +158,6 @@ class ContentForm extends Component
     public function save()
     {
         $validated = $this->validate($this->rules(), $this->messages);
-
-        dd($validated);
         DB::beginTransaction();
 
         try {

@@ -94,12 +94,7 @@
                     <i class="fa fa-info-circle cursor-pointer text-secondary"></i>
                 </span>
                 <div class="input-group" wire:ignore>
-                    <input type="text" id="stars" class="form-control" x-data x-ref="starsInput" wire:ignore
-                        x-init="const tag = new Tagify($refs.starsInput);
-                        tag.addTags(@js($stars));
-                        tag.on('change', () => {
-                            $wire.set('stars', tag.value.map(e => e.value));
-                        });">
+                    <input type="text" id="stars" class="form-control" data-tagify wire:model="stars">
                 </div>
                 @error('stars')
                     <span class="text-danger">{{ $message }}</span>
@@ -114,15 +109,7 @@
                     </span>
                 </label>
                 <div class="input-group" wire:ignore>
-                    <input type="text" id="genres" class="form-control" x-data x-ref="genresInput" wire:ignore
-                        x-init="const tag = new Tagify($refs.genresInput, {
-                            whitelist: @js($allGenres),
-                            enforceWhitelist: false
-                        });
-                        tag.addTags(@js($genres));
-                        tag.on('change', () => {
-                            $wire.set('genres', tag.value.map(e => e.value));
-                        });">
+                    <input type="text" id="genres" class="form-control" data-tagify wire:model="genres">
                 </div>
                 @error('genres')
                     <span class="text-danger">{{ $message }}</span>

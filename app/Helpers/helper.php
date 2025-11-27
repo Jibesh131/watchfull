@@ -66,8 +66,8 @@ if (!function_exists('format_amount_without_commas')) {
     }
 }
 
-if (! function_exists('extract_tagify_values')) {
-    function extract_tagify_values($data)
+if (! function_exists('jsonToArray')) {
+    function json_to_array($data)
     {
         $starsArray = json_decode($data, true);
         if (!is_array($starsArray)) {

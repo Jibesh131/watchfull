@@ -4,6 +4,8 @@ namespace App\Livewire\Creator;
 
 use App\Models\Content;
 use App\Models\Genre;
+use FFMpeg\FFMpeg;
+use FFMpeg\FFProbe;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -28,11 +30,11 @@ class ContentForm extends Component
     public $movie_path;
     public $genres = [];
     public $stars = [];
-    public $director;
+    public $director = [];
     public $description;
     public $age_rating;
-    public $writers;
-    public $producers;
+    public $writers = [];
+    public $producers = [];
     public $composer;
     public $cinematographer;
     public $editor;
@@ -54,8 +56,28 @@ class ContentForm extends Component
     public $genreC;
     public $picC;
 
-    protected array $messages = [
-        'movie.required_if' => 'The movie field is required',
+    protected array $fileProfiles = [
+        'video' => [
+            'thumbnail' => 'uploads/video/thumbnails',
+            'file' => 'uploads/video/files',
+        ],
+
+        'music' => [
+            'banner' => 'uploads/music/banners',
+            'file'   => 'uploads/music/files',
+        ],
+
+        'movie' => [
+            'thumbnail'  => 'uploads/movie/thumbnail',
+            'movie'  => 'uploads/movie/file',
+            // 'file'    => 'uploads/movie/files',
+        ],
+    ];
+
+    protected array $typeFields = [
+        'video' => ['title', 'description', 'composer', 'editor', 'stars', 'genres'],
+        'music' => ['title', 'description', 'singer', 'lyricist', 'stars', 'genres'],
+        'movie' => ['title', 'description', 'director', 'producer', 'composer', 'cinematographer', 'editor', 'production_designer', 'choreographer', 'stars', 'genres'],
     ];
 
     public function mount($id = null)
@@ -148,6 +170,10 @@ class ContentForm extends Component
         return $common;
     }
 
+    protected array $messages = [
+        'movie.required_if' => 'The movie field is required',
+    ];
+
     public function render()
     {
         return view('livewire.creator.content-form', [
@@ -159,133 +185,115 @@ class ContentForm extends Component
     {
         $validated = $this->validate($this->rules(), $this->messages);
         DB::beginTransaction();
-
+        // dd($validated);
         try {
-            if ($this->thumbnail instanceof TemporaryUploadedFile) {
-                $imgPath = $this->thumbnail->store('uploads/thumbnails', 'public');
-            } else {
-                $imgPath = null;
-            }
-
-            if ($this->movie instanceof TemporaryUploadedFile) {
-                $moviePath = $this->movie->store('uploads/movie', 'public');
-            } else {
-                $moviePath = null;
-            }
+            $filePaths = $this->processUploads($validated['type']);
 
             if ($this->itemId) {
-                $content = Content::findOrFail($this->itemId);
-
-                $content->type = $validated['type'] ?? $content->type;
-                $content->title = $validated['title'] ?? $content->title;
-                $content->description = $validated['description'] ?? $content->description;
-                $content->age_rating = $validated['age_rating'] ?? $content->age_rating;
-
-                if ($imgPath) {
-                    if ($content->thumbnail && Storage::disk('public')->exists($content->thumbnail)) {
-                        Storage::disk('public')->delete($content->thumbnail);
-                    }
-                    $content->thumbnail = $imgPath;
-                }
-
-                if ($moviePath) {
-                    if ($content->content_file && Storage::disk('public')->exists($content->content_file)) {
-                        Storage::disk('public')->delete($content->content_file);
-                    }
-                    $content->content_file = $moviePath;
-                }
-
-                if (isset($validated['stars'])) {
-                    $content->stars = json_encode($validated['stars']);
-                }
-
-                if (isset($validated['genres'])) {
-                    $content->genres = json_encode($validated['genres']);
-                }
-
-                $content->save();
-
-                DB::commit();
-
-                $this->cleanupOldTmp();
-                $this->deleteCurrentTmp();
-
-                session()->flash('notify', [
-                    'type' => 'success',
-                    'title' => 'Updated',
-                    'message' => 'Content updated successfully.',
-                ]);
-
-                return redirect()->route('creator.content.index');
+                $this->updateContent($this->itemId, $validated, $filePaths); //EDIT
             } else {
-                $content = new Content();
-                $content->type = $validated['type'];
-                $content->title = $validated['title'];
-                $content->description = $validated['description'];
-                $content->age_rating = $validated['age_rating'] ?? null;
-                $content->thumbnail = $imgPath;
-                $content->content_file = $moviePath;
-                $content->stars = isset($validated['stars']) ? json_encode($validated['stars']) : json_encode([]);
-                $content->genres = isset($validated['genres']) ? json_encode($validated['genres']) : json_encode([]);
-                $content->save();
-
-                DB::commit();
-
-                $this->cleanupOldTmp();
-                // $this->deleteCurrentTmp();
-
-                session()->flash('notify', [
-                    'type' => 'success',
-                    'title' => 'Success',
-                    'message' => 'Content uploaded successfully.'
-                ]);
-
-                return redirect()->route('creator.content.index');
+                $this->createContent($validated, $filePaths);  //ADD
             }
+            exit('--->');   
+            DB::commit();
+
+            session()->flash('notify', [
+                'type' => 'success',
+                'title' => $this->itemId ? 'Updated' : 'Success',
+                'message' => $this->itemId ? 'Content updated successfully.' : 'Content uploaded successfully.',
+            ]);
+
+            return redirect()->route('creator.content.index');
         } catch (\Throwable $e) {
             DB::rollBack();
-            // $this->deleteCurrentTmp();
-            $this->dispatch('notify', type: 'danger', message: 'Something went wrong. Please try again later.', title: 'Oops');
+
+            // $this->dispatch('notify', type: 'danger', title: 'Oops', message: 'Something went wrong.');
+            logger()->error($e);
+            $this->dispatch('notify', type: 'danger', title: 'Oops', message: $e->getMessage());
+
+            return;
         }
     }
 
-    protected function registerTmp($file)
+    private function processUploads(string $type): array
     {
-        if ($file instanceof TemporaryUploadedFile) {
-            $this->tempFiles[] = $file->getRealPath();
-        }
-    }
-
-    protected function deleteCurrentTmp()
-    {
-        foreach ($this->tempFiles as $path) {
-            $dir = dirname($path);
-            if (is_dir($dir)) {
-                File::deleteDirectory($dir);
+        $paths = [];
+        foreach ($this->fileProfiles[$type] as $field => $directory) {
+            $file = $this->$field ?? null;
+            if ($file instanceof TemporaryUploadedFile) {
+                $paths[$field] = $file->store($directory, 'public');
             }
         }
-
-        $this->tempFiles = [];
+        return $paths;
     }
 
-    protected function cleanupOldTmp()
+
+    private function createContent(array $validated, array $filePaths): Content
+    {
+        $content = new Content();
+        $this->fillContentFields($content, $validated, $filePaths);
+        $content->save();
+        return $content;
+    }
+
+    private function updateContent(int $id, array $validated, array $filePaths): Content
+    {
+        $content = Content::findOrFail($id);
+        $this->deleteReplacedFiles($content, $filePaths);
+        $this->fillContentFields($content, $validated, $filePaths);
+        $content->save();
+        return $content;
+    }
+
+    private function fillContentFields(Content $content, array $validated, array $filePaths): void
+    {
+        $content->type        = $validated['type'] ?? $content->type;
+        $content->title       = $validated['title'];
+        $content->description = $validated['description'];
+        $content->age_rating  = $validated['age_rating'] ?? null;
+
+        if($validated['type'] == 'movie'){
+            $content->director  = json_to_array($validated['director']  ?? []);
+            $content->writers  = json_to_array($validated['writers']  ?? []);
+            $content->producers  = json_to_array($validated['producers']  ?? []);
+            $content->composer = $validated['producers']  ?? '';
+            $content->cinematographer = $validated['cinematographer'] ?? '';
+            $content->editor = $validated['editor'] ?? '';
+            $content->pd = $validated['pd'] ?? '';
+            // $content->duration = FFProbe::create()->format($)->get('deauration');
+        }
+
+        foreach ($filePaths as $field => $path) {
+            $content->$field = $path;
+        }
+
+        $content->stars  = json_to_array($validated['stars']  ?? []);
+        $content->genres = json_to_array($validated['genres'] ?? []);
+        dd($content);
+    }
+
+    private function deleteReplacedFiles(Content $content, array $filePaths): void
+    {
+        foreach ($filePaths as $field => $newPath) {
+            $this->deleteOldFile($content->$field ?? null);
+        }
+    }
+
+    private function deleteOldFile(?string $oldPath): void   //Used to remove replaced files during update.
+    {
+        if ($oldPath && Storage::disk('public')->exists($oldPath)) {
+            Storage::disk('public')->delete($oldPath);
+        }
+    }
+
+    private function cleanupOldTmp(): void
     {
         $tmp = storage_path('app/livewire-tmp');
 
         foreach (glob($tmp . '/*') as $folder) {
-            if (is_dir($folder) && filemtime($folder) < now()->subHour()->timestamp) {
+            if (is_dir($folder) && filemtime($folder) < now()->subHours(2)->timestamp) {
                 File::deleteDirectory($folder);
             }
         }
-    }
-
-    public function updatedThumbnail()
-    {
-        $this->registerTmp($this->thumbnail);
-    }
-
-    public function updatedMovie()
-    {
-        $this->registerTmp($this->movie);
     }
 }

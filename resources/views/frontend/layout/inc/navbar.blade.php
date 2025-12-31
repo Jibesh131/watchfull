@@ -37,8 +37,8 @@
         @endauth
         @guest
         <div class="header-right login-part">
-            <button class="btn btn-primary ">Sign Up</button>
-            <button class="btn btn-secondary">Log In</button>
+            <a href="{{ route('auth.user.login.view') }}" class="btn btn-primary ">Sign up</a>
+            <a href="{{ route('auth.user.login.view') }}" class="btn btn-secondary">Sign in</a>
         </div>
         @endguest
     </div>

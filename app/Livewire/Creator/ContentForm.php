@@ -59,18 +59,17 @@ class ContentForm extends Component
     protected array $fileProfiles = [
         'video' => [
             'thumbnail' => 'uploads/video/thumbnails',
-            'file' => 'uploads/video/files',
+            'content_file' => 'uploads/video/files',
         ],
 
         'music' => [
             'banner' => 'uploads/music/banners',
-            'file'   => 'uploads/music/files',
+            'content_file'   => 'uploads/music/files',
         ],
 
         'movie' => [
             'thumbnail'  => 'uploads/movie/thumbnail',
-            'movie'  => 'uploads/movie/file',
-            // 'file'    => 'uploads/movie/files',
+            'content_file'  => 'uploads/movie/content_file',
         ],
     ];
 
@@ -100,11 +99,11 @@ class ContentForm extends Component
         $this->movie_path = $content->content_file;
         $this->description = $content->description;
         $this->age_rating = $content->age_rating;
-        $this->stars = json_decode($content->stars, true) ?? [];
-        $this->genres = json_decode($content->genres, true) ?? [];
-        $this->director = json_decode($content->director, true) ?? null;
-        $this->writers = json_decode($content->writers, true) ?? null;
-        $this->producers = json_decode($content->producers, true) ?? null;
+        $this->stars = json_encode($content->stars) ?? [];
+        $this->genres = json_encode($content->genres) ?? [];
+        $this->director = json_encode($content->directors) ?? [];
+        $this->writers = json_encode($content->writers) ?? [];
+        $this->producers = json_encode($content->producers) ?? [];
 
         // Movie-specific
         $this->composer = $content->composer ?? null;
@@ -185,16 +184,14 @@ class ContentForm extends Component
     {
         $validated = $this->validate($this->rules(), $this->messages);
         DB::beginTransaction();
-        // dd($validated);
         try {
             $filePaths = $this->processUploads($validated['type']);
-
             if ($this->itemId) {
                 $this->updateContent($this->itemId, $validated, $filePaths); //EDIT
             } else {
                 $this->createContent($validated, $filePaths);  //ADD
             }
-            exit('--->');   
+            
             DB::commit();
 
             session()->flash('notify', [
@@ -240,6 +237,7 @@ class ContentForm extends Component
     {
         $content = Content::findOrFail($id);
         $this->deleteReplacedFiles($content, $filePaths);
+        // dd($filePaths);
         $this->fillContentFields($content, $validated, $filePaths);
         $content->save();
         return $content;
@@ -251,25 +249,32 @@ class ContentForm extends Component
         $content->title       = $validated['title'];
         $content->description = $validated['description'];
         $content->age_rating  = $validated['age_rating'] ?? null;
+        $content->stars  = json_to_array($validated['stars']  ?? []);
+        $content->genres = json_to_array($validated['genres'] ?? []);
 
         if($validated['type'] == 'movie'){
-            $content->director  = json_to_array($validated['director']  ?? []);
+            $content->directors  = json_to_array($validated['director']  ?? []);
             $content->writers  = json_to_array($validated['writers']  ?? []);
             $content->producers  = json_to_array($validated['producers']  ?? []);
-            $content->composer = $validated['producers']  ?? '';
+            $content->composer = $validated['composer']  ?? '';
             $content->cinematographer = $validated['cinematographer'] ?? '';
             $content->editor = $validated['editor'] ?? '';
             $content->pd = $validated['pd'] ?? '';
-            // $content->duration = FFProbe::create()->format($)->get('deauration');
         }
-
+        
         foreach ($filePaths as $field => $path) {
             $content->$field = $path;
         }
 
-        $content->stars  = json_to_array($validated['stars']  ?? []);
-        $content->genres = json_to_array($validated['genres'] ?? []);
-        dd($content);
+        $ffprobe = FFProbe::create([
+            'ffprobe.binaries' => 'D:\\ffmpeg\\bin\\ffprobe.exe',
+        ]);
+        
+        $duration = $ffprobe
+        ->format(storage_path('app/public/' . $content->content_file))
+        ->get('duration');
+        
+        $content->duration = intval($duration);
     }
 
     private function deleteReplacedFiles(Content $content, array $filePaths): void

@@ -14,6 +14,10 @@ class AuthController extends Controller
         return view('auth.user.login');
     }
 
+    public function userLoginPost(Request $request){
+        dd($request->all());
+    }
+
     public function creatorLogout(Request $request){
         Auth::guard()->logout();
         $request->session()->invalidate();

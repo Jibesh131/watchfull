@@ -6,7 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Content extends Model
 {
-    //
+    protected $casts = [
+        'stars' => 'array',
+        'genres' => 'array',
+        'directors' => 'array',
+        'writers' => 'array',
+        'producers' => 'array',
+    ];
+
     public function scopeStatus($query, $status = 'published')
     {
         return $query->where('status', $status);

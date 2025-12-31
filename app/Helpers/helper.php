@@ -66,18 +66,19 @@ if (!function_exists('format_amount_without_commas')) {
     }
 }
 
-if (! function_exists('jsonToArray')) {
-    function json_to_array($data)
-    {
-        $starsArray = json_decode($data, true);
-        if (!is_array($starsArray)) {
-            return [];
+if (! function_exists('json_to_array')) {
+    function json_to_array($data){
+        if (is_array($data)) {
+            return $data;
         }
-        return array_map(function ($star) {
-            return $star['value'] ?? null;
-        }, $starsArray);
+        if (is_string($data)) {
+            $decoded = json_decode($data, true);
+            return is_array($decoded) ? $decoded : [];
+        }
+        return [];
     }
 }
+
 
 if (! function_exists('hash_encode')) {
     function hash_encode($id)
@@ -104,5 +105,33 @@ if (! function_exists('setLengthLimit')) {
             return $str;
         }
         return substr($str, 0, $len) . '...';
+    }
+}
+
+if (!function_exists('content_status_badge')) {
+    function content_status_badge($status = null): array
+    {
+        return match ($status) {
+            'published' => ['bg-success-gradient', 'PUBLISHED'],
+            'scheduled' => ['bg-primary-gradient', 'SCHEDULED'],
+            'draft'     => ['bg-dark-gradient', 'DRAFT'],
+            'hidden'    => ['bg-secondary-gradient', 'HIDDEN'],
+            'pending'   => ['bg-warning-gradient text-dark', 'PENDING'],
+            default     => ['bg-secondary-gradient', strtoupper($status ?? 'UNKNOWN')],
+        };
+    }
+}
+
+if (!function_exists('badge_list')) {
+    function badge_list($items, string $class)
+    {
+        if (empty($items)) {
+            return '<span class="text-muted small">(empty)</span>';
+        }
+
+        return collect($items)->map(
+            fn($i) =>
+            "<span class=\"badge {$class} me-1\">{$i}</span>"
+        )->implode('');
     }
 }

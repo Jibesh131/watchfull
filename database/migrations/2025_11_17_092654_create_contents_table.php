@@ -23,10 +23,12 @@ return new class extends Migration
             $table->json('genres')->nullable();
             $table->json('directors')->nullable();
             $table->json('writers')->nullable();
-            $table->string('producer', 100)->nullable();
+            $table->string('producers', 100)->nullable();
             $table->string('composer', 100)->nullable();
+            $table->string('cinematographer', 100)->nullable();
             $table->string('editor', 100)->nullable();
             $table->string('pd', 100)->comment('Production Designer')->nullable();
+            $table->unsignedInteger('duration')->nullable();
             $table->enum('status', ['published', 'draft', 'schedule', 'hidden', 'pending'])->default('pending');
             $table->timestamps();
         });

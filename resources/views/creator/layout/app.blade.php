@@ -160,6 +160,7 @@
                     from: "top",
                     align: "right"
                 },
+                mouse_over: 'pause',
             });
         }
     </script>

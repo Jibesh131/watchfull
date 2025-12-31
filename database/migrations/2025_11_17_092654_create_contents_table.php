@@ -31,6 +31,7 @@ return new class extends Migration
             $table->unsignedInteger('duration')->nullable();
             $table->enum('status', ['published', 'draft', 'schedule', 'hidden', 'pending'])->default('pending');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

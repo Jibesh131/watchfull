@@ -1,38 +1,44 @@
 @extends('creator.layout.app')
 
 @push('css')
-<style>
-    .status-badge-pos{
-        position: absolute;
-        top: 8px;
-        left: 8px;
-    }
+    <style>
+        .status-badge-pos {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+        }
 
-    .item-shadow{
-        box-shadow: 0px 0px 10px 0 rgba(69, 65, 78, 0.35);
-    }
+        .item-shadow {
+            box-shadow: 0px 0px 10px 0 rgba(69, 65, 78, 0.35);
+        }
 
-    /* Thumbnail wrapper */
-    .thumbnail-wrapper {
-        position: relative;
-        width: 100%;
-        min-height: 220px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: #f1f3f5;              /* Neutral background */
-        border-radius: 12px 0 0 12px;
-        overflow: hidden;
-    }
+        /* Thumbnail wrapper */
+        .thumbnail-wrapper {
+            position: relative;
+            width: 100%;
+            min-height: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f1f3f5;
+            /* Neutral background */
+            border-radius: 12px 0 0 12px;
+            overflow: hidden;
+        }
 
-    /* Thumbnail image */
-    .thumbnail-wrapper img {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;              /* 🔑 Show full image */
-        object-position: center;
-    }
-</style>
+        .thumbnail-wrapper img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            /* 🔑 Show full image */
+            object-position: center;
+        }
+
+        .badge {
+            padding: 5px 8px;
+            font-size: 11.5px;
+        }
+    </style>
 @endpush
 
 @section('content')
@@ -54,14 +60,15 @@
                     <option value="draft" {{ request()->status == 'draft' ? 'selected' : '' }}>Draft</option>
                     <option value="scheduled" {{ request()->status == 'scheduled' ? 'selected' : '' }}>Scheduled</option>
                     <option value="hidden" {{ request()->status == 'hidden' ? 'selected' : '' }}>Hidden</option>
+                    <option value="deleted" {{ request()->status == 'deleted' ? 'selected' : '' }}>Deleted</option>
                 </select>
 
-                <select class="form-select" style="width: 160px;" name="date">
-                    <option value="newest" {{ in_array(request()->date, ['newest', null, '']) ? 'selected' : '' }}>Newest
+                <select class="form-select" style="width: 160px;" name="time">
+                    <option value="newest" {{ in_array(request()->time, ['newest', null, '']) ? 'selected' : '' }}>Newest
                         First</option>
-                    <option value="oldest" {{ request()->date == 'oldest' ? 'selected' : '' }}>Oldest First</option>
-                    <option value="last7" {{ request()->date == 'last7' ? 'selected' : '' }}>Last 7 Days</option>
-                    <option value="last30" {{ request()->date == 'last30' ? 'selected' : '' }}>Last 30 Days</option>
+                    <option value="oldest" {{ request()->time == 'oldest' ? 'selected' : '' }}>Oldest First</option>
+                    <option value="last7" {{ request()->time == 'last7' ? 'selected' : '' }}>Last 7 Days</option>
+                    <option value="last30" {{ request()->time == 'last30' ? 'selected' : '' }}>Last 30 Days</option>
                 </select>
 
                 <button type="submit" class="btn btn-secondary">Filter <i
@@ -86,7 +93,15 @@
     <div class="card-body">
         <!-- Content List -->
         @forelse ($contents as $content)
-            <div class="card rounded mb-3 item-shadow">
+            @php
+                $hid = hash_encode($content?->id ?? 0);
+                $isDeleted = false;
+            @endphp
+            @if ($content->trashed())
+                @php $isDeleted = true; @endphp
+            @endif
+
+            <div class="card rounded mb-3 item-shadow" id={{ $hid }}>
                 <div class="row g-0 content-card-row">
                     <!-- Thumbnail Section -->
                     <div class="col-md-2 pe-0">
@@ -110,32 +125,48 @@
                                 <h5 class="content-title fw-bold text-dark mb-0">
                                     {{ $content?->title ?? 'Untitled' }}
                                     <span class="badge bg-dark metadata-badge mx-1">
-                                        <i class="fa fa-film me-1"></i> {{ ucfirst($content?->type ?? 'N/A') }}
+                                        <i class="fa fa-film me-1"></i> {{ ucfirst($content?->type ?? 'Unknown') }}
                                     </span>
                                 </h5>
+
                                 <div class="btn-group btn-group-sm" role="group">
-                                    @php $hid = hash_encode($content?->id ?? 0); @endphp
-                                    <a href="{{ route('creator.content.edit', $hid) }}" class="btn btn-primary">
-                                        <i class="fa fa-pencil"></i>
-                                    </a>
-                                    <a href="{{ route('creator.content.delete', $hid) }}" class="btn btn-danger">
-                                        <i class="fa fa-trash"></i>
-                                    </a>
-                                    <a href="{{ route('creator.content.edit', $hid) }}" class="btn btn-secondary">
+                                    @if(!$isDeleted)
+                                        <a href="{{ route('creator.content.edit', $hid) }}"
+                                            class="btn btn bg-primary-gradient text-light"
+                                            data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Content">
+                                            <i class="fa fa-pencil"></i>
+                                        </a>
+                                        <a href="javascript:void(0);" data-content-id="{{ $hid }}"
+                                            class="btn btn bg-danger-gradient text-light content-delete"
+                                            data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Content">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
+                                    @endif
+
+                                    <a href="{{ route('creator.content.edit', $hid) }}"
+                                        class="btn bg-secondary-gradient text-light d-none">
                                         <i class="fa fa-gear"></i>
                                     </a>
+
+                                    @if($isDeleted)
+                                        <a href="{{ route('creator.content.edit', $hid) }}"
+                                            class="btn bg-success-gradient text-light"
+                                            data-bs-toggle="tooltip" data-bs-placement="top" title="Restore Content">
+                                            <i class="fa fa-arrows-rotate"></i>
+                                        </a>
+                                    @endif
                                 </div>
                             </div>
 
                             <!-- Metadata -->
                             <div class="mb-2">
-                                <span class="badge bg-secondary metadata-badge me-1 mb-1">
+                                <span class="badge bg-secondary2 metadata-badge me-1 mb-1">
                                     Age Rating: {{ $content?->age_rating ?? 'N/A' }}
                                 </span>
                                 <span class="badge bg-dark metadata-badge me-1 mb-1">
-                                    Duration: {{ $content?->duration ?? '--' }} min
+                                    Duration: {{ formatDuration($content?->duration ?? 0) }}
                                 </span>
-                                <span class="badge bg-primary metadata-badge me-1 mb-1">
+                                <span class="badge bg-primary2 metadata-badge me-1 mb-1">
                                     Release:
                                     {{ $content?->created_at ? format_date($content->created_at, 'M d, Y') : '--' }}
                                 </span>
@@ -155,8 +186,7 @@
 
                                     <!-- Description -->
                                     <div class="d-flex align-items-start mb-1 d-none">
-                                        <span
-                                            class="info-label fw-semibold text-secondary ">Description:</span>
+                                        <span class="info-label fw-semibold text-secondary ">Description:</span>
                                         <span class="info-value text-muted flex-fill ms-2">
                                             {{ $content?->description ?? 'No description' }}
                                         </span>
@@ -207,8 +237,7 @@
 
                                     <!-- Cinematographer -->
                                     <div class="d-flex align-items-start mb-1">
-                                        <span
-                                            class="info-label fw-semibold text-secondary ">Cinematographer:</span>
+                                        <span class="info-label fw-semibold text-secondary ">Cinematographer:</span>
                                         <span class="info-value text-dark flex-fill ms-2">
                                             {{ $content?->cinematographer ?? '(empty)' }}
                                         </span>
@@ -239,5 +268,43 @@
         @empty
             <div class="text-center text-muted">No content found</div>
         @endforelse
+
+         @include('creator.layout.inc.paginate', ['item' => $contents])
     </div>
 @endsection
+
+@push('js')
+    <script>
+        $(function() {
+            $('.content-delete').on('click', function() {
+                let id = $(this).data('content-id');
+                Swal.fire({
+                    title: 'Delete this content?',
+                    text: "It will be inaccessible to users and permanently removed after 24 hours.",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, Delete',
+                    cancelButtonText: 'Cancel',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ route('creator.content.delete', ':id') }}".replace(
+                                ':id', id),
+                            type: "GET",
+                            success: function(res) {
+                                if (res.status = 'success') {
+                                    $('#' + id).remove();
+                                    showNotify('success', res.msg, 'Success');
+                                }
+                            },
+                            error: function(request, error) {
+                                console.log("Error: " + error);
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+@endpush

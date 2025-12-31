@@ -14,17 +14,49 @@ class AuthController extends Controller
         return view('auth.user.login');
     }
 
-    public function userLoginPost(Request $request){
-        dd($request->all());
+    public function userLoginPost(Request $request)
+    {
+        $validate = $request->validate(
+            [
+                'email' => 'required|email|exists:users,email',
+                'password' => 'required|min:8',
+            ],
+            [
+                'email.required' => 'Email is required.',
+                'email.email' => 'Please enter a valid email address.',
+                'email.exists' => 'This email is not registered.',
+                'password.required' => 'Password is required.',
+                'password.min' => 'Password must be at least 8 characters.',
+            ]
+        );
+
+        if (Auth::attempt($validate)) {
+            $user = Auth::user();
+
+            if ($user->status === 'active') {
+                return redirect()->intended(route('index'));
+            }
+
+            Auth::logout();
+            return redirect()->back()->with('error', 'Your account is not allowed to login here.');
+        }
+
+        return back()->withErrors([
+            'email' => 'Invalid credentials.'
+        ]);
     }
 
-    public function creatorLogout(Request $request){
+    public function userLogout(Request $request){
+        
+    }
+
+    public function creatorLogout(Request $request)
+    {
         Auth::guard()->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
         return redirect()->route('index');
-        
     }
 
     public function creatorLoginView()

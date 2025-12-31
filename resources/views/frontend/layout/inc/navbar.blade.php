@@ -22,8 +22,8 @@
                 <i class="fas fa-layer-group"></i>
             </div>
             <div class="user-profile" id="userProfile">
-                <div class="user-avatar">H</div>
-                <span class="user-name">Hi, Hizrian</span>
+                <div class="user-avatar">{{ substr(auth()->user()->first_name, 0, 1) }}</div>
+                <span class="user-name">Hi, {{ auth()->user()->first_name }}</span>
 
                 <div class="dropdown-menu">
                     <ul>

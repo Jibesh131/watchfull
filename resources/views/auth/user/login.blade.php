@@ -50,12 +50,11 @@
                     </div>
                 </div>
             </div>
-
         </div>
         <div class="form-content">
             <!-- Login Form -->
             <div id="loginForm">
-                <h2>Sign in to your account</h2>
+                <h2 class="mt-3">Sign in to your account</h2>
                 <form action="{{ route('auth.user.login.post') }}" method="POST">
                     @csrf
                     <div class="form-group">
@@ -80,7 +79,7 @@
                 <div class="toggle-form">
                     Not a member? <a href="registration.html">Create account</a>
                 </div>
-                <div class="divider">or continue with</div>
+                <div class="divider d-none">or continue with</div>
                 {{-- Instragram Btn --}}
                 <button class="social-btn d-none">
                     <div class="instagram-icon">
@@ -92,7 +91,7 @@
                     Continue with Instagram
                 </button>
                 {{-- Google Btn --}}
-                <a href="{{ route('auth.google.login') }}" class="social-btn btn">
+                <a href="{{ route('auth.google.login') }}" class="social-btn btn d-none">
                     <svg class="google-icon" viewBox="0 0 24 24">
                         <path fill="#4285F4"
                             d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />

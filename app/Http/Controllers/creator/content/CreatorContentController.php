@@ -22,7 +22,7 @@ class CreatorContentController extends Controller
         $keyword = request()->keyword ?? '';
         $type = request()->type ?? '';
         $status = request()->status ?? '';
-        $date = request()->date ?? '';
+        $time = request()->time ?? '';
 
         $contents = Content::query();
 
@@ -33,17 +33,20 @@ class CreatorContentController extends Controller
             $contents->where('type', 'like', $type);
         }
         if(!blank($status)){
-            $contents->status($status);
+            if($status == 'deleted'){
+                $contents->onlyTrashed('deleted_at');
+            }else{
+                $contents->status($status);
+            }
         }
-        match ($date) {
+        match ($time) {
             'newest' => $contents->orderBy('created_at', 'desc'),
             'oldest' => $contents->orderBy('created_at', 'asc'),
             'last7'  => $contents->where('created_at', '>=', now()->subDays(7)),
             'last30' => $contents->where('created_at', '>=', now()->subDays(30)),
             default  => $contents->orderBy('created_at', 'desc'),
         };
-        
-        $contents = $contents->get();
+        $contents = $contents->paginate(10);
         return view('creator.content.index', compact('title', 'search', 'links', 'contents'));
     }
 
@@ -78,7 +81,10 @@ class CreatorContentController extends Controller
         return view('creator.content.add', compact('title', 'links', 'id'));
     }
 
-    public function delete($id){
-        dd(hash_decode($id));
+    public function delete($hash_id){
+        $id = hash_decode($hash_id);
+        $content = Content::findOrFail($id);
+        $content->delete();
+        return response()->json(['status' => 'success', 'msg' => 'Content Deleted Successfully']);
     }
 }

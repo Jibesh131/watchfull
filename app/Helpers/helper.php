@@ -135,3 +135,20 @@ if (!function_exists('badge_list')) {
         )->implode('');
     }
 }
+
+
+if (!function_exists('formatDuration')) {
+    function formatDuration($seconds)
+    {
+        $seconds = intval($seconds);
+        $hours = floor($seconds / 3600);
+        $minutes = floor(($seconds % 3600) / 60);
+        $secs = $seconds % 60;
+
+        if ($hours > 0) {
+            return sprintf("%02d:%02d:%02d", $hours, $minutes, $secs);
+        } else {
+            return sprintf("%02d:%02d", $minutes, $secs);
+        }
+    }
+}

@@ -47,7 +47,25 @@ class AuthController extends Controller
     }
 
     public function userLogout(Request $request){
-        
+        Auth::guard()->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect()->route('index');
+    }
+
+    public function userSignUpView(){
+        return view('auth.user.signup');
+    }
+
+    public function userSignUpPost(Request $request)
+    {
+        $validate = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email',
+            'phone' => 'required|string|max:20',
+            'dob'   =>  'required|date|before:today',
+            'password' => 'required|string|min:8|confirmed'
+        ]);
     }
 
     public function creatorLogout(Request $request)

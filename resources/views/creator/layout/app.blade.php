@@ -133,7 +133,6 @@
         })
 
         function showNotify(type, message, title = '', delay = 4500) {
-
             const icons = {
                 primary: 'fas fa-star',
                 secondary: 'fas fa-circle',     

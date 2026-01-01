@@ -5,10 +5,11 @@ use App\Http\Controllers\auth\GoogleController;
 use Illuminate\Support\Facades\Route;
 
 // =========== USER ===========
+Route::get('/signup', [AuthController::class, 'userSignUpView'])->name(('auth.user.signup.view'));
+Route::post('/signup', [AuthController::class, 'userSignUpPost'])->name(('auth.user.signup.post'));
 Route::get('/login', [AuthController::class, 'userLoginView'])->name(('auth.user.login.view'));
 Route::post('/login', [AuthController::class, 'userLoginPost'])->name(('auth.user.login.post'));
-Route::get('/signup', [AuthController::class, 'userLoginView'])->name(('auth.user.signup.view'));
-Route::post('/signup', [AuthController::class, 'userLoginView'])->name(('auth.user.signup.post'));
+Route::get('/logout', [AuthController::class, 'userLogout'])->name(('auth.user.logout'));
 
 Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name(('auth.google.login'));
 Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name(('auth.google.callback'));

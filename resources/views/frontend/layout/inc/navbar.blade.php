@@ -29,7 +29,7 @@
                     <ul>
                         <li><a href="#">My Profile</a></li>
                         <li><a href="#">Settings</a></li>
-                        <li><a href="#">Logout</a></li>
+                        <li><a href="javascript:void(0);" id="logoutBtn">Logout</a></li>
                     </ul>
                 </div>
             </div>
@@ -37,7 +37,7 @@
         @endauth
         @guest
         <div class="header-right login-part">
-            <a href="{{ route('auth.user.login.view') }}" class="btn btn-primary ">Sign up</a>
+            <a href="{{ route('auth.user.signup.view') }}" class="btn btn-primary ">Sign up</a>
             <a href="{{ route('auth.user.login.view') }}" class="btn btn-secondary">Sign in</a>
         </div>
         @endguest

@@ -171,15 +171,17 @@ body {
     display: block;
     font-size: 14px;
     font-weight: 500;
-    margin-bottom: 12px;
+    margin-bottom: 6px;
     color: #e5e7eb;
 }
 
 .login-container .form-group input[type="email"],
 .login-container .form-group input[type="password"],
-.login-container .form-group input[type="text"] {
+.login-container .form-group input[type="text"],
+.login-container .form-group input[type="date"],
+.login-container .form-group input[type="tel"] {
     width: 100%;
-    padding: 10.5px 15px;
+    padding: 10px 15px;
     border: 1px solid #3a3a4a;
     border-radius: 9px;
     font-size: 14px;
